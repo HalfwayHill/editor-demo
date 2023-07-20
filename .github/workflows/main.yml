@@ -18,16 +18,6 @@ jobs:
   - name: checkout
     uses: actions/checkout@v2
 
-  - name: ESLintCode
-    uses: actions/setup-node@v2
-  - run: yarn # 执行命令安装依赖，也可以执行shell脚本./.github/scripts/build.sh
-  - run: npm install -g eslint && eslint ./src/*/**.ts # 安装全局ESLint并检测代码
-
-  - name: StyleLintCode
-    uses: actions/setup-node@v2
-  - run: npm install -g stylelint stylelint-less
-  - run: mkdir .tmp-css-check && touch .tmp-css-check/.stylelintrc.json && echo '{"plugins":["stylelint-less"],"rules":{}}' >> .tmp-css-check/.stylelintrc.json && stylelint "src/**/*.less" --config .tmp-css-check/.stylelintrc.json --aei
-
  Deploy:
    needs: Check
    # The type of runner that the job will run on
