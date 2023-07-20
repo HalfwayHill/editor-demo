@@ -1,55 +1,55 @@
 name: Editor Demo  # ci文件的名字
 env:
-  CI: false
+ CI: false
 # 控制工作流程何时运行
 on:
-  push:
-    branches: [ main ]
-permissions: 
-  contents: write
+ push:
+  branches: [ main ]
+permissions:
+ contents: write
 # CI/CD通过执行一个个的Job来完成每个阶段的工作，这里配置每个Jobs
 jobs:
-  # Job的名称
-  Check:
-    # Runner，github托管的虚拟机环境，用来执行下面的Job命令
-    runs-on: ubuntu-latest
-    steps:
-      # 子步骤名称
-      - name: checkout
-        uses: actions/checkout@v2
+ # Job的名称
+ Check:
+  # Runner，github托管的虚拟机环境，用来执行下面的Job命令
+  runs-on: ubuntu-latest
+  steps:
+  # 子步骤名称
+  - name: checkout
+    uses: actions/checkout@v2
 
-      - name: ESLintCode
-        uses: actions/setup-node@v2
-      - run: yarn # 执行命令安装依赖，也可以执行shell脚本./.github/scripts/build.sh
-      - run: pnpm install -g eslint && eslint ./src/*/**.js # 安装全局ESLint并检测代码
+  - name: ESLintCode
+    uses: actions/setup-node@v2
+  - run: yarn # 执行命令安装依赖，也可以执行shell脚本./.github/scripts/build.sh
+  - run: pnpm install -g eslint && eslint ./src/*/**.js # 安装全局ESLint并检测代码
 
-      - name: StyleLintCode
-        uses: actions/setup-node@v2
-      - run: pnpm install -g stylelint stylelint-less
-      - run: mkdir .tmp-css-check && touch .tmp-css-check/.stylelintrc.json && echo '{"plugins":["stylelint-less"],"rules":{}}' >> .tmp-css-check/.stylelintrc.json && stylelint "src/**/*.less" --config .tmp-css-check/.stylelintrc.json --aei
+  - name: StyleLintCode
+    uses: actions/setup-node@v2
+  - run: pnpm install -g stylelint stylelint-less
+  - run: mkdir .tmp-css-check && touch .tmp-css-check/.stylelintrc.json && echo '{"plugins":["stylelint-less"],"rules":{}}' >> .tmp-css-check/.stylelintrc.json && stylelint "src/**/*.less" --config .tmp-css-check/.stylelintrc.json --aei
 
-  Deploy:
-    needs: Check
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+ Deploy:
+   needs: Check
+   # The type of runner that the job will run on
+   runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: checkout
-        uses: actions/checkout@v2
+   # Steps represent a sequence of tasks that will be executed as part of the job
+   steps:
+     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+     - name: checkout
+       uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: build
-        uses: actions/setup-node@v2
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: main
-      - run: pnpm
-      - run: pnpm build:prod
+     # Runs a single command using the runners shell
+     - name: build
+       uses: actions/setup-node@v2
+       env:
+         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+         BRANCH: main
+     - run: pnpm
+     - run: pnpm build:prod
 
-      - name: deploy
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
-        with:
-          branch: gh-pages
-          folder: build
+     - name: deploy
+       uses: JamesIves/github-pages-deploy-action@v4.3.3
+       with:
+         branch: gh-pages
+         older: build
