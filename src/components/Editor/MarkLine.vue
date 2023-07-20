@@ -12,16 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, VNodeRef} from "vue";
 import store from "@/store";
 import emitter from "@/utils/mitt";
 
 const editorStore = store.editorStore;
 
-const linesDom = ref<Element>();
+const linesDom = ref<VNodeRef>();
 
 const data = reactive<{
-  lines: string[];
+  lines: ('xt'|'xc'|'xb'|'yl'|'yc'|'yr')[];
   diff: number;
   lineStatus: {
     xt: boolean;
@@ -65,7 +65,6 @@ const hideLine = () => {
 }
 
 const showLine = (dragNode: Element, isDownward: boolean, isRightward: boolean) => {
-  const lines = linesDom.value as Element;
   const components = document.querySelectorAll('.shape')
   const dragNodeRectInfo = getNodeRelativePosition(dragNode)
   const dragNodeHalfWidth = dragNodeRectInfo.width / 2
@@ -78,102 +77,108 @@ const showLine = (dragNode: Element, isDownward: boolean, isRightward: boolean) 
     const nodeHalfWidth = width / 2
     const nodeHalfHeight = height / 2
 
-    const conditions = {
-      top: [
-        {
-          isNearly: isNearly(dragNodeRectInfo.top, top),
-          lineNode: (lines as HTMLElement).xt[0], // xt
-          line: 'xt',
-          dragShift: top,
-          lineShift: top,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.bottom, top),
-          lineNode: lines.xt[0], // xt
-          line: 'xt',
-          dragShift: top - dragNodeRectInfo.height,
-          lineShift: top,
-        },
-        {
-          // 组件与拖拽节点的中间是否对齐
-          isNearly: isNearly(dragNodeRectInfo.top + dragNodeHalfHeight, top + nodeHalfHeight),
-          lineNode: lines.xc[0], // xc
-          line: 'xc',
-          dragShift: top + nodeHalfHeight - dragNodeHalfHeight,
-          lineShift: top + nodeHalfHeight,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.top, bottom),
-          lineNode: lines.xb[0], // xb
-          line: 'xb',
-          dragShift: bottom,
-          lineShift: bottom,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.bottom, bottom),
-          lineNode: lines.xb[0], // xb
-          line: 'xb',
-          dragShift: bottom - dragNodeRectInfo.height,
-          lineShift: bottom,
-        },
-      ],
-      left: [
-        {
-          isNearly: isNearly(dragNodeRectInfo.left, left),
-          lineNode: lines.yl[0], // yl
-          line: 'yl',
-          dragShift: left,
-          lineShift: left,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.right, left),
-          lineNode: lines.yl[0], // yl
-          line: 'yl',
-          dragShift: left - dragNodeRectInfo.width,
-          lineShift: left,
-        },
-        {
-          // 组件与拖拽节点的中间是否对齐
-          isNearly: isNearly(dragNodeRectInfo.left + dragNodeHalfWidth, left + nodeHalfWidth),
-          lineNode: lines.yc[0], // yc
-          line: 'yc',
-          dragShift: left + nodeHalfWidth - dragNodeHalfWidth,
-          lineShift: left + nodeHalfWidth,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.left, right),
-          lineNode: lines.yr[0], // yr
-          line: 'yr',
-          dragShift: right,
-          lineShift: right,
-        },
-        {
-          isNearly: isNearly(dragNodeRectInfo.right, right),
-          lineNode: lines.yr[0], // yr
-          line: 'yr',
-          dragShift: right - dragNodeRectInfo.width,
-          lineShift: right,
-        },
-      ],
+    if (linesDom.value !== undefined) {
+      const conditions = {
+
+        top: [
+          {
+            isNearly: isNearly(dragNodeRectInfo.top, top),
+            lineNode: (linesDom.value as any).xt[0], // xt
+            line: 'xt',
+            dragShift: top,
+            lineShift: top,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.bottom, top),
+            lineNode: (linesDom.value as any).xt[0], // xt
+            line: 'xt',
+            dragShift: top - dragNodeRectInfo.height,
+            lineShift: top,
+          },
+          {
+            // 组件与拖拽节点的中间是否对齐
+            isNearly: isNearly(dragNodeRectInfo.top + dragNodeHalfHeight, top + nodeHalfHeight),
+            lineNode: (linesDom.value as any).xc[0], // xc
+            line: 'xc',
+            dragShift: top + nodeHalfHeight - dragNodeHalfHeight,
+            lineShift: top + nodeHalfHeight,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.top, bottom),
+            lineNode: (linesDom.value as any).xb[0], // xb
+            line: 'xb',
+            dragShift: bottom,
+            lineShift: bottom,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.bottom, bottom),
+            lineNode: (linesDom.value as any).xb[0], // xb
+            line: 'xb',
+            dragShift: bottom - dragNodeRectInfo.height,
+            lineShift: bottom,
+          },
+        ],
+        left: [
+          {
+            isNearly: isNearly(dragNodeRectInfo.left, left),
+            lineNode: (linesDom.value as any).yl[0], // yl
+            line: 'yl',
+            dragShift: left,
+            lineShift: left,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.right, left),
+            lineNode: (linesDom.value as any).yl[0], // yl
+            line: 'yl',
+            dragShift: left - dragNodeRectInfo.width,
+            lineShift: left,
+          },
+          {
+            // 组件与拖拽节点的中间是否对齐
+            isNearly: isNearly(dragNodeRectInfo.left + dragNodeHalfWidth, left + nodeHalfWidth),
+            lineNode: (linesDom.value as any).yc[0], // yc
+            line: 'yc',
+            dragShift: left + nodeHalfWidth - dragNodeHalfWidth,
+            lineShift: left + nodeHalfWidth,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.left, right),
+            lineNode: (linesDom.value as any).yr[0], // yr
+            line: 'yr',
+            dragShift: right,
+            lineShift: right,
+          },
+          {
+            isNearly: isNearly(dragNodeRectInfo.right, right),
+            lineNode: (linesDom.value as any).yr[0], // yr
+            line: 'yr',
+            dragShift: right - dragNodeRectInfo.width,
+            lineShift: right,
+          },
+        ],
+      };
+
+      const needToShow: any[] = [];
+      Object.keys(conditions).forEach(key => {
+        // 遍历符合的条件并处理
+        conditions[key as keyof typeof conditions].forEach((condition) => {
+          if (!condition.isNearly) return
+          // 修改当前组件位移
+          editorStore.setShapePosStyle({key, value: condition.dragShift});
+          condition.lineNode.style[key] = `${condition.lineShift}px`;
+          needToShow.push(condition.line);
+        })
+      });
+
+      // 同一方向上同时显示三条线可能不太美观，因此才有了这个解决方案
+      // 同一方向上的线只显示一条，例如多条横条只显示一条横线
+      if (needToShow.length) {
+        chooseTheTureLine(needToShow, isDownward, isRightward);
+      }
     }
 
-    const needToShow: any[] = []
-    Object.keys(conditions).forEach(key => {
-      // 遍历符合的条件并处理
-      conditions[key as keyof typeof conditions].forEach((condition) => {
-        if (!condition.isNearly) return
-        // 修改当前组件位移
-        editorStore.setShapePosStyle({key, value: condition.dragShift});
-        condition.lineNode.style[key] = `${condition.lineShift}px`
-        needToShow.push(condition.line)
-      })
-    })
 
-    // 同一方向上同时显示三条线可能不太美观，因此才有了这个解决方案
-    // 同一方向上的线只显示一条，例如多条横条只显示一条横线
-    if (needToShow.length) {
-      chooseTheTureLine(needToShow, isDownward, isRightward)
-    }
+
   })
 }
 
