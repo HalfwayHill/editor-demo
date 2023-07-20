@@ -16,7 +16,9 @@ jobs:
   steps:
   # 子步骤名称
   - name: checkout
-    uses: actions/checkout@v2
+    uses: actions/checkout@v3
+    with:
+      node-version: '16'
 
  Deploy:
    needs: Check
@@ -27,16 +29,20 @@ jobs:
    steps:
      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
      - name: checkout
-       uses: actions/checkout@v2
+       uses: actions/checkout@v3
+       with:
+         node-version: '16'
 
      # Runs a single command using the runners shell
      - name: build
-       uses: actions/setup-node@v2
+       uses: actions/setup-node@v3
+       with:
+         node-version: '16'
        env:
          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
          BRANCH: main
      - run: yarn
-     - run: yarn build:prod
+     - run: yarn build
 
      - name: deploy
        uses: JamesIves/github-pages-deploy-action@v4.3.3
