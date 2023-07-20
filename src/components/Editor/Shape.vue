@@ -54,8 +54,8 @@ const data = reactive({
 
 onMounted(() => {
   emitter.on('runAnimation', () => {
-    if (props.element === editorStore.getCurComponent) {
-      runAnimation(thisRef, editorStore.getCurComponent.animations)
+    if (props.element === editorStore.getCurComponent && thisRef.value !== undefined) {
+      runAnimation(thisRef.value, editorStore.getCurComponent.animations);
     }
   })
 });

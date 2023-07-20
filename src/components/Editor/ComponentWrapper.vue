@@ -21,10 +21,12 @@ interface Prop {
 const props = defineProps<Prop>()
 
 // 获取当前Dom
-const wrapperDom = ref(null);
+const wrapperDom = ref<Element>();
 
 onMounted(() => {
-  runAnimation(wrapperDom, props.config.animations)
+  if (wrapperDom.value !== undefined) {
+    runAnimation(wrapperDom.value, props.config.animations);
+  }
 })
 
 const handleClick = () => {

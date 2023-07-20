@@ -1,14 +1,14 @@
 <template>
-    <textarea 
+    <textarea
         v-if="editorStore.editorState.editMode == 'edit'"
         :value="propValue"
         class="text textarea"
         @input="handleInput"
         ref="v-text"
     ></textarea>
-    <div v-else class="text disabled">
-        <div v-for="(text, index) in propValue!.split('\n')" :key="index">{{ text }}</div>
-    </div>
+  <div v-else class="text disabled">
+    <div v-for="(text, index) in propValue!.split('\n')" :key="index">{{ text }}</div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -34,16 +34,20 @@ const handleInput = (e: any) => {
 
 <style lang="scss" scoped>
 .text {
-    border: 1px solid #ddd;
-    padding: 5px 10px;
-    white-space: normal;
-    word-break: break-all;
+  border: 1px solid #ddd;
+  white-space: normal;
+  word-break: break-all;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
 }
+
 .textarea {
-    overflow: hidden;
-    resize: none;
+  overflow: hidden;
+  resize: none;
 }
+
 .disabled {
-    border: none;
+  border: none;
 }
 </style>

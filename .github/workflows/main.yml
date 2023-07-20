@@ -35,9 +35,9 @@ jobs:
 
      # Runs a single command using the runners shell
      - name: build
-       uses: actions/setup-node@v3
+       uses: actions/setup-node@v3.5.0
        with:
-         node-version: '16'
+         node-version: "16.X"
        env:
          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
          BRANCH: main
