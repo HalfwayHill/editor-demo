@@ -1,0 +1,31 @@
+{
+  "name": "chars-editor-demo",
+  "private": true,
+  "version": "0.0.0",
+  "homepage": "https://HalfwayHill.github.io/editor-demo",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "animate.css": "^4.1.1",
+    "echarts": "^5.4.2",
+    "element-plus": "^2.3.7",
+    "lodash": "^4.17.21",
+    "mitt": "^3.0.1",
+    "pinia": "^2.1.4",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.3"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.3.3",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "sass": "^1.63.6",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.0",
+    "vue-tsc": "^0.34.7"
+  }
+}
