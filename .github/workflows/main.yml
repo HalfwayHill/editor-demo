@@ -21,7 +21,7 @@ jobs:
   - name: ESLintCode
     uses: actions/setup-node@v2
   - run: yarn # 执行命令安装依赖，也可以执行shell脚本./.github/scripts/build.sh
-  - run: npm install -g eslint && eslint ./src/*/**.js # 安装全局ESLint并检测代码
+  - run: npm install -g eslint && eslint ./src/*/**.ts # 安装全局ESLint并检测代码
 
   - name: StyleLintCode
     uses: actions/setup-node@v2
