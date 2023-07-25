@@ -26,3 +26,18 @@
 - 预览、保存数据
 - 编辑器 - 绑定事件
 - 编辑器 - 绑定动画
+
+## 构建
+
+```shell
+# Init
+pnpm init
+```
+```shell
+# Dev
+pnpm run dev
+```
+```shell
+# Build
+pnpm run build
+```
