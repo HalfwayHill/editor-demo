@@ -91,10 +91,16 @@ export const editorStore = defineStore('editor', () => {
         }
     }
 
+    /**
+     * 设置画布数据
+     */
     const setComponentData = (componentData: any[] = []) =>  {
         editorState.componentData = componentData;
     }
 
+    /**
+     * 重新设置快照
+     */
     const recordSnapshot = () => {
         // 添加新的快照
         editorState.snapshotData[++editorState.snapshotIndex] = cloneDeep(editorState.componentData)
@@ -195,7 +201,7 @@ export const editorStore = defineStore('editor', () => {
 
     /**
      * 移除事件
-     * @param event
+     * @param event 事件
      */
     const removeEvent = (event: any) => {
         delete editorState.curComponent.events[event]

@@ -2,7 +2,7 @@ import mitt from "mitt"
 
 
 type Events = {
-    move: {dragNode: Element, isDownward: boolean, isRightward: boolean};
+    move: {isDownward: boolean, isRightward: boolean};
     unMove: any;
     runAnimation: any;
 };

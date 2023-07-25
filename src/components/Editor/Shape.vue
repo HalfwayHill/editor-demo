@@ -132,7 +132,7 @@ const handleMouseDown = (e: any) => {
       // 后面两个参数代表鼠标移动方向
       // currY - startY > 0 true 表示向下移动 false 表示向上移动
       // currX - startX > 0 true 表示向右移动 false 表示向左移动
-      emitter.emit('move', {dragNode: thisRef.value! as Element, isDownward:currY - startY > 0, isRightward: currX - startX > 0});
+      emitter.emit('move', {isDownward:currY - startY > 0, isRightward: currX - startX > 0});
     })
   }
 
@@ -222,7 +222,7 @@ const handleContextMenu = (e: any) => {
   position: absolute;
 }
 .active {
-  border: 1px solid #70c0ff;
+  outline: 1px solid #70c0ff;
 }
 .shape-point {
   position: absolute;
