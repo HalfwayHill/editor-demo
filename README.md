@@ -1,20 +1,6 @@
 # Editor Demo
 
-## 简介
-
-该项目由开发者根据**稀土掘金的谭光志先生**的文档和Github重构，由此特别感谢。
-
-开发者在原有的Vue2 + VueX基础上，将项目升级重构为Vue3 + Pinia
-
-[可视化拖拽组件库一些技术要点原理分析](https://github.com/woai3c/Front-end-articles/issues/19)
-
-[可视化拖拽组件库一些技术要点原理分析（二）](https://github.com/woai3c/Front-end-articles/issues/20)
-
-[可视化拖拽组件库一些技术要点原理分析（三）](https://github.com/woai3c/Front-end-articles/issues/21)
-
-[可视化拖拽组件库一些技术要点原理分析（四）](https://github.com/woai3c/Front-end-articles/issues/33)
-
-## 技术栈 
+## 技术栈
 
 - Vue3
 - Vite
@@ -26,11 +12,15 @@
 - lodash 函数库
 - mitt 事件收发库
 - vue-router 路由库
+- ESLint
+- Prettier
+- husky
+- lint-staged
 
 ## 项目功能
 
 - [x] 编辑器 - 画布
-- [x] 自定义组件 
+- [x] 自定义组件
 - [x] 拖拽
 - [x] 删除组件、调整图层层级
 - [x] 放大缩小
@@ -61,10 +51,12 @@
 # Install all package
 pnpm install
 ```
+
 ```shell
 # Dev
 pnpm run dev
 ```
+
 ```shell
 # Build
 pnpm run build

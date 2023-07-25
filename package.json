@@ -2,11 +2,17 @@
   "name": "chars-editor-demo",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://HalfwayHill.github.io/editor-demo",
+  "lint-staged": {
+    "*.{vue,js,ts,jsx,tsx,json}": "eslint --fix",
+    "*.md": [
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
@@ -22,7 +28,16 @@
   "devDependencies": {
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.3.3",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.15.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
     "sass": "^1.63.6",
     "typescript": "^5.0.4",
     "vite": "^4.4.0",
