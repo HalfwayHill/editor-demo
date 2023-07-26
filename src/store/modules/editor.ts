@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {computed, reactive, ref} from 'vue'
+import {computed, reactive} from 'vue'
 import {cloneDeep} from "lodash";
 import {swap} from "@/utils/utils";
 import toast from "@/utils/toast";
@@ -41,7 +41,6 @@ export const editorStore = defineStore('editor', () => {
     })
 
     // ref reactive 就是state
-    const count = ref<number>(0)
 
     //  computed() 就是getters
     const getCurComponent = computed(() => {
@@ -66,11 +65,12 @@ export const editorStore = defineStore('editor', () => {
         editorState.curComponentZIndex = data.zIndex;
     }
 
-    const setShapeStyle = (pos: { top?:number, left?: number, width?: number, height?: number }) => {
+    const setShapeStyle = (pos: { top?:number, left?: number, width?: number, height?: number, rotate?: number }) => {
         if (pos.top) editorState.curComponent.style.top = pos.top
         if (pos.left) editorState.curComponent.style.left = pos.left
         if (pos.width) editorState.curComponent.style.width = pos.width
         if (pos.height) editorState.curComponent.style.height = pos.height
+        if (pos.rotate) editorState.curComponent.style.rotate = pos.rotate
     }
 
     const setShapePosStyle = (data: { key: string, value: any }) => {

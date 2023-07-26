@@ -15,6 +15,7 @@
 import {onMounted, reactive} from "vue";
 import store from "@/store";
 import emitter from "@/utils/mitt";
+import { sin, cos } from '@/utils/translate';
 
 const editorStore = store.editorStore;
 
@@ -36,7 +37,6 @@ const data = reactive<{
     yc: boolean;
     yr: boolean;
   };
-  editor: any;
 }>({
   lines: ['xt', 'xc', 'xb', 'yl', 'yc', 'yr'], // 分别对应三条横线和三条竖线
   diff: 3, // 相距 dff 像素将自动吸附
@@ -47,12 +47,10 @@ const data = reactive<{
     yl: false,
     yc: false,
     yr: false,
-  },
-  editor: null,
-})
+  }
+});
 
 onMounted(() => {
-  data.editor = document.querySelector('#editor') as Element;
   // 监听元素移动和不移动的事件
   emitter.on('move', (data) => {
     showLine(data.isDownward, data.isRightward)
@@ -61,7 +59,30 @@ onMounted(() => {
   emitter.on('unMove', () => {
     hideLine()
   });
-})
+});
+
+const translateComponentStyle = (style: any) => {
+  style = { ...style }
+  if (style.rotate != 0) {
+    const newWidth = style.width * cos(style.rotate) + style.height * sin(style.rotate)
+    const diffX = (style.width - newWidth) / 2 // 旋转后范围变小是正值，变大是负值
+    style.left += diffX
+    style.right = style.left + newWidth
+
+    const newHeight = style.height * cos(style.rotate) + style.width * sin(style.rotate)
+    const diffY = (newHeight - style.height) / 2 // 始终是正de
+    style.top -= diffY
+    style.bottom = style.top + newHeight
+
+    style.width = newWidth
+    style.height = newHeight
+  } else {
+    style.bottom = style.top + style.height
+    style.right = style.left + style.width
+  }
+
+  return style
+}
 
 /**
  * 隐藏线条
@@ -81,109 +102,110 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
   // 获取当前画布中的所有元素
   // const components = document.querySelectorAll('.shape');
   const components = editorStore.editorState.componentData;
-  const dragNodeRectInfo = { ...editorStore.editorState.curComponent.style }
-  // const dragNodeRectInfo = getNodeRelativePosition(dragNode);
-  const dragNodeHalfWidth = dragNodeRectInfo.width / 2;
-  const dragNodeHalfHeight = dragNodeRectInfo.height / 2;
-  dragNodeRectInfo.bottom = dragNodeRectInfo.top + dragNodeRectInfo.height
-  dragNodeRectInfo.right = dragNodeRectInfo.left + dragNodeRectInfo.width
+  const curComponentStyle = translateComponentStyle(editorStore.editorState.curComponent.style)
+  const curComponentHalfWidth = curComponentStyle.width / 2
+  const curComponentHalfHeight = curComponentStyle.height / 2
 
   hideLine();
 
   components.forEach(component => {
-    if (component === editorStore.editorState.curComponent) return;
-    const { top, height, left, width } = component.style;
-    const bottom = top + height;
-    const right = left + width;
-    const nodeHalfWidth = width / 2;
-    const nodeHalfHeight = height / 2;
+    if (component == editorStore.editorState.curComponent) return;
+    const componentStyle = translateComponentStyle(component.style)
+    const { top, left, bottom, right } = componentStyle
+    const componentHalfWidth = componentStyle.width / 2
+    const componentHalfHeight = componentStyle.height / 2
 
     const conditions = {
       top: [
         {
-          isNearly: isNearly(dragNodeRectInfo.top, top),
+          isNearly: isNearly(curComponentStyle.top, top),
           lineNode: lines.get("xt"), // xt
           line: 'xt',
           dragShift: top,
           lineShift: top,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.bottom, top),
+          isNearly: isNearly(curComponentStyle.bottom, top),
           lineNode: lines.get("xt"), // xt
           line: 'xt',
-          dragShift: top - dragNodeRectInfo.height,
+          dragShift: top - curComponentStyle.height,
           lineShift: top,
         },
         {
           // 组件与拖拽节点的中间是否对齐
-          isNearly: isNearly(dragNodeRectInfo.top + dragNodeHalfHeight, top + nodeHalfHeight),
+          isNearly: isNearly(curComponentStyle.top + curComponentHalfHeight, top + componentHalfHeight),
           lineNode: lines.get("xc"), // xc
           line: 'xc',
-          dragShift: top + nodeHalfHeight - dragNodeHalfHeight,
-          lineShift: top + nodeHalfHeight,
+          dragShift: top + componentHalfHeight - curComponentHalfHeight,
+          lineShift: top + componentHalfHeight,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.top, bottom),
+          isNearly: isNearly(curComponentStyle.top, bottom),
           lineNode: lines.get("xb"), // xb
           line: 'xb',
           dragShift: bottom,
           lineShift: bottom,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.bottom, bottom),
+          isNearly: isNearly(curComponentStyle.bottom, bottom),
           lineNode: lines.get("xb"), // xb
           line: 'xb',
-          dragShift: bottom - dragNodeRectInfo.height,
+          dragShift: bottom - curComponentStyle.height,
           lineShift: bottom,
         },
       ],
       left: [
         {
-          isNearly: isNearly(dragNodeRectInfo.left, left),
+          isNearly: isNearly(curComponentStyle.left, left),
           lineNode: lines.get("yl"), // yl
           line: 'yl',
           dragShift: left,
           lineShift: left,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.right, left),
+          isNearly: isNearly(curComponentStyle.right, left),
           lineNode: lines.get("yl"), // yl
           line: 'yl',
-          dragShift: left - dragNodeRectInfo.width,
+          dragShift: left - curComponentStyle.width,
           lineShift: left,
         },
         {
           // 组件与拖拽节点的中间是否对齐
-          isNearly: isNearly(dragNodeRectInfo.left + dragNodeHalfWidth, left + nodeHalfWidth),
+          isNearly: isNearly(curComponentStyle.left + curComponentHalfWidth, left + componentHalfWidth),
           lineNode: lines.get("yc"), // yc
           line: 'yc',
-          dragShift: left + nodeHalfWidth - dragNodeHalfWidth,
-          lineShift: left + nodeHalfWidth,
+          dragShift: left + componentHalfWidth - curComponentHalfWidth,
+          lineShift: left + componentHalfWidth,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.left, right),
+          isNearly: isNearly(curComponentStyle.left, right),
           lineNode: lines.get("yr"), // yr
           line: 'yr',
           dragShift: right,
           lineShift: right,
         },
         {
-          isNearly: isNearly(dragNodeRectInfo.right, right),
+          isNearly: isNearly(curComponentStyle.right, right),
           lineNode: lines.get("yr"), // yr
           line: 'yr',
-          dragShift: right - dragNodeRectInfo.width,
+          dragShift: right - curComponentStyle.width,
           lineShift: right,
         },
       ],
     };
 
     const needToShow: any[] = [];
+    const { rotate } = editorStore.editorState.curComponent.style;
     Object.keys(conditions).forEach(key => {
       // 遍历符合的条件并处理
       conditions[key as keyof typeof conditions].forEach((condition) => {
         if (!condition.isNearly) return
         // 修改当前组件位移
-        editorStore.setShapePosStyle({key, value: condition.dragShift});
+        editorStore.setShapePosStyle({
+          key,
+          value: rotate != 0? translateCurComponentShift(key, condition, curComponentStyle) : condition.dragShift,
+        });
+
         condition.lineNode.style[key] = `${condition.lineShift}px`;
         needToShow.push(condition.line);
       })
@@ -195,6 +217,15 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
       chooseTheTureLine(needToShow, isDownward, isRightward);
     }
   })
+};
+
+const translateCurComponentShift = (key: string, condition: any, curComponentStyle: any) => {
+  const { width, height } = editorStore.editorState.curComponent.style
+  if (key == 'top') {
+    return Math.round(condition.dragShift - (height - curComponentStyle.height) / 2)
+  }
+
+  return Math.round(condition.dragShift - (width - curComponentStyle.width) / 2)
 }
 
 /**
@@ -252,22 +283,6 @@ const chooseTheTureLine = (needToShow: any[], isDownward: boolean, isRightward: 
  */
 const isNearly = (dragValue: any, targetValue: any) => {
   return Math.abs(dragValue - targetValue) <= data.diff
-}
-
-/**
- * 获取节点相对编辑器的位置
- * @param node 节点元素
- */
-const getNodeRelativePosition = (node: Element) => {
-  let {top, height, bottom, left, width, right} = node.getBoundingClientRect()
-  const editorRectInfo = data.editor.getBoundingClientRect()
-
-  left -= editorRectInfo.left
-  top -= editorRectInfo.top
-  right -= editorRectInfo.left
-  bottom -= editorRectInfo.top
-
-  return {top, height, bottom, left, width, right}
 }
 </script>
 

@@ -36,6 +36,10 @@ const handleDragStart = (event: any) => {
     color: #333;
     padding: 2px 5px;
 
+    &:active {
+      cursor: grabbing;
+    }
+
     .icon {
       width: 1em;
       height: 1em;

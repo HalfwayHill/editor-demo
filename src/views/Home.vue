@@ -144,6 +144,9 @@ const data = reactive({
   eventList,
 });
 
+/**
+ * 初始化
+ */
 const init = () => {
   // 用保存的数据恢复画布
   if (localStorage.getItem('canvasData')) {
@@ -155,9 +158,13 @@ const init = () => {
   }
 }
 
+/**
+ * 重新设置ID
+ * @param jsonData
+ */
 const resetID = (jsonData: any): any => {
-  jsonData.forEach((val: any, idx: number) => {
-    val.id = generateID()
+  jsonData.forEach((value: any) => {
+    value.id = generateID()
   })
 
   return data
@@ -236,15 +243,26 @@ const handleFileChange = (e: any) => {
   reader.readAsDataURL(file)
 }
 
+/**
+ * 画布元素添加一个动画
+ * @param animate
+ */
 const addAnimation = (animate: any) => {
   editorStore.addAnimation(animate);
   data.isShowAnimation = false
 }
 
+/**
+ * 预览元素动画
+ */
 const previewAnimate = () => {
   emitter.emit('runAnimation');
 }
 
+/**
+ * 移除元素某个动画
+ * @param index 元素内动画索引
+ */
 const removeAnimation = (index: any) => {
   editorStore.removeAnimation(index);
 }
@@ -259,7 +277,7 @@ const handlePreviewChange = () => {
 }
 
 /**
- * 保存
+ * 保存画布数据
  */
 const save = () => {
   localStorage.setItem('canvasData', JSON.stringify(editorStore.editorState.componentData))
@@ -267,15 +285,27 @@ const save = () => {
   ElMessage.success('保存成功');
 }
 
+/**
+ * 清空画布
+ */
 const clearCanvas = () => {
   editorStore.setComponentData([]);
 }
 
+/**
+ * 为元素添加事件
+ * @param event
+ * @param param
+ */
 const addEvent = (event: any, param: any) => {
   data.isShowEvent = false;
   editorStore.addEvent({ event, param });
 }
 
+/**
+ * 为元素移除事件
+ * @param event
+ */
 const removeEvent = (event: any) => {
   editorStore.removeEvent(event);
 }

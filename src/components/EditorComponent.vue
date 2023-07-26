@@ -39,11 +39,11 @@
 <script setup lang="ts">
 import ContextMenu from "@/components/Editor/ContextMenu.vue";
 import MarkLine from "@/components/Editor/MarkLine.vue";
-import Shape from "@/components/Editor/Shape.vue";
+import Shape from "@/components/Editor/ShapeComponent.vue";
 import store from "@/store";
 import getStyle from "@/utils/style";
 
-const props = defineProps({
+defineProps({
   isEdit: {
     type: Boolean,
     default: true,
@@ -104,6 +104,7 @@ const getTextareaHeight = (element: any, text: any) => {
 .editor {
   position: relative;
   background: #fff;
+  flex-shrink: 0;
 }
 .edit {
   .component {
