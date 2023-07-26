@@ -160,6 +160,8 @@ function calculateLeftBottom(style: any, curPosition: any, pointInfo: any) {
     }
 }
 
-export default function calculateComponentPositionAndSize(name: string, style: any, curPositon: any, pointInfo: any) {
+
+
+export default function calculateComponentPositionAndSize(name: 'lt'| 't'|'rt'|'r'|'rb'|'b'|'lb'|'l', style: any, curPositon: any, pointInfo: any) {
     funcs[name](style, curPositon, pointInfo)
 }

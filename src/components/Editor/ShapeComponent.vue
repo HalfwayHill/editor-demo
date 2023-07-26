@@ -20,8 +20,8 @@ import {nextTick, onMounted, reactive, ref} from "vue";
 import runAnimation from "@/utils/runAnimation";
 import store from "@/store";
 import emitter from "@/utils/mitt";
-import { getRotatedPointCoordinate } from '@/utils/translate'
-import calculateComponentPositionAndSize from '@/utils/calculateComponentPositionAndSize'
+import { getRotatedPointCoordinate } from '@/utils/translate';
+import calculateComponentPositionAndSize from '@/utils/calculateComponentPositionAndSize';
 
 const editorStore = store.editorStore;
 
