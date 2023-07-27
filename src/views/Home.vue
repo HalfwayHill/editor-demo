@@ -192,6 +192,8 @@ const listenCopyAndPaste = () => {
  * @param jsonData
  */
 const resetID = (jsonData: any): any => {
+  console.log(jsonData);
+  jsonData = JSON.parse(jsonData);
   jsonData.forEach((value: any) => {
     value.id = generateID();
   })
