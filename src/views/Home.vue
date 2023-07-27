@@ -4,7 +4,7 @@
       <el-button @click="undo">撤消</el-button>
       <el-button @click="redo">重做</el-button>
       <label for="input" class="insert">插入图片</label>
-      <input type="file" @change="handleFileChange" id="input" hidden />
+      <input type="file" @change="handleFileChange" id="input" hidden/>
       <el-button @click="previewClick" style="margin-left: 10px;">预览</el-button>
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空画布</el-button>
@@ -19,19 +19,19 @@
     <main>
       <!-- 左侧组件列表 -->
       <section class="left">
-        <ComponentList />
+        <ComponentList/>
       </section>
       <!-- 中间画布 -->
       <section class="center">
         <div class="content" @drop="handleDrop" @dragover="handleDragOver" @click="deselectCurComponent">
-          <Editor />
+          <Editor/>
         </div>
       </section>
       <!-- 右侧属性列表 -->
       <section class="right">
         <el-tabs v-model="data.activeName" type="card">
           <el-tab-pane label="属性" name="attr">
-            <AttrList v-if="editorStore.editorState.curComponent" />
+            <AttrList v-if="editorStore.editorState.curComponent"/>
             <p v-else class="placeholder">请选择组件</p>
           </el-tab-pane>
           <el-tab-pane label="动画" name="animation">
@@ -84,7 +84,8 @@
                   @mouseover="data.hoverPreviewAnimate = animate.value"
                   @click="addAnimation(animate)"
               >
-                <div :class="[data.hoverPreviewAnimate === animate.value && 'animate__animated animate__' + animate.value]">
+                <div
+                    :class="[data.hoverPreviewAnimate === animate.value && 'animate__animated animate__' + animate.value]">
                   {{ animate.label }}
                 </div>
               </div>
@@ -97,16 +98,18 @@
     <!-- 选择事件 -->
     <Modal v-model:show="data.isShowEvent">
       <el-tabs type="card" v-model="data.eventActiveName">
-        <el-tab-pane v-for="item in data.eventList" :key="item.key" :label="item.label" :name="item.key" style="padding: 0 20px">
-          <el-input v-if="item.key == 'redirect'" v-model="item.param" type="textarea" placeholder="请输入完整的 URL" />
-          <el-input v-if="item.key == 'alert'" v-model="item.param" type="textarea" placeholder="请输入要 alert 的内容" />
+        <el-tab-pane v-for="item in data.eventList" :key="item.key" :label="item.label" :name="item.key"
+                     style="padding: 0 20px">
+          <el-input v-if="item.key == 'redirect'" v-model="item.param" type="textarea" placeholder="请输入完整的 URL"/>
+          <el-input v-if="item.key == 'alert'" v-model="item.param" type="textarea"
+                    placeholder="请输入要 alert 的内容"/>
           <el-button style="margin-top: 20px;" @click="addEvent(item.key, item.param)">确定</el-button>
         </el-tab-pane>
       </el-tabs>
     </Modal>
 
     <!-- 预览 -->
-    <Preview v-model:show="data.isShowPreview" @change="handlePreviewChange" />
+    <Preview v-model:show="data.isShowPreview" @change="handlePreviewChange"/>
   </div>
 </template>
 
@@ -145,9 +148,9 @@ const data = reactive({
 });
 
 /**
- * 初始化
+ * 重置数据
  */
-const init = () => {
+const restore = () => {
   // 用保存的数据恢复画布
   if (localStorage.getItem('canvasData')) {
     editorStore.setComponentData(resetID(JSON.parse(localStorage.getItem('canvasData')!)));
@@ -156,7 +159,33 @@ const init = () => {
   if (localStorage.getItem('canvasStyle')) {
     editorStore.setCanvasStyle(resetID(JSON.parse(localStorage.getItem('canvasStyle')!)));
   }
-}
+};
+
+/**
+ * 监听复制粘贴
+ */
+const listenCopyAndPaste = () => {
+  const ctrlKey = 17, vKey = 86, cKey = 67, xKey = 88;
+  let isCtrlDown = false;
+
+  window.onkeydown = (e) => {
+    if (e.keyCode == ctrlKey) {
+      isCtrlDown = true;
+    } else if (isCtrlDown && e.keyCode == cKey) {
+      editorStore.copy();
+    } else if (isCtrlDown && e.keyCode == vKey) {
+      editorStore.paste(false);
+    } else if (isCtrlDown && e.keyCode == xKey) {
+      editorStore.cut();
+    }
+  }
+
+  window.onkeyup = (e) => {
+    if (e.keyCode == ctrlKey) {
+      isCtrlDown = false;
+    }
+  }
+};
 
 /**
  * 重新设置ID
@@ -181,7 +210,7 @@ const handleDrop = (event: any) => {
   component.style.top = event.offsetY;
   component.style.left = event.offsetX;
   component.id = generateID();
-  editorStore.addComponent(component);
+  editorStore.addComponent({component, index: undefined});
   editorStore.recordSnapshot();
 }
 
@@ -195,7 +224,7 @@ const handleDragOver = (e: any) => {
 }
 
 const deselectCurComponent = () => {
-  editorStore.setCurComponent({ component: null, zIndex: null });
+  editorStore.setCurComponent({component: null, index: null});
   editorStore.hideContextMenu();
 }
 
@@ -220,20 +249,23 @@ const handleFileChange = (e: any) => {
     const img = new Image();
     img.onload = () => {
       editorStore.addComponent({
-        id: generateID(),
-        component: 'Picture',
-        label: '图片',
-        icon: '',
-        propValue: fileResult,
-        animations: [],
-        events: [],
-        style: {
-          top: 0,
-          left: 0,
-          width: img.width,
-          height: img.height,
-          rotate: '',
+        component: {
+          id: generateID(),
+          component: 'v-picture',
+          label: '图片',
+          icon: '',
+          propValue: fileResult,
+          animations: [],
+          events: [],
+          style: {
+            top: 0,
+            left: 0,
+            width: img.width,
+            height: img.height,
+            rotate: '',
+          },
         },
+        index: undefined
       })
     };
 
@@ -299,7 +331,7 @@ const clearCanvas = () => {
  */
 const addEvent = (event: any, param: any) => {
   data.isShowEvent = false;
-  editorStore.addEvent({ event, param });
+  editorStore.addEvent({event, param});
 }
 
 /**
@@ -311,7 +343,9 @@ const removeEvent = (event: any) => {
 }
 
 // 执行初始化
-init();
+restore();
+// 监听复制粘贴
+listenCopyAndPaste();
 
 </script>
 

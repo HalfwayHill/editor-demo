@@ -54,7 +54,7 @@ const list = [
     },
     {
         id: 0,
-        component: 'Picture',
+        component: 'v-picture',
         label: '图片',
         icon: 'PictureRounded',
         propValue: getImageUrl('../assets/title.jpg'),

@@ -3,6 +3,7 @@ import {computed, reactive} from 'vue'
 import {cloneDeep} from "lodash";
 import {swap} from "@/utils/utils";
 import toast from "@/utils/toast";
+import generateID from '@/utils/generateID';
 
 
 interface CanvasStyleData{
@@ -13,14 +14,15 @@ interface CanvasStyleData{
 interface EditorState {
     editMode: string; // 编辑器模式 edit read
     canvasStyleData: CanvasStyleData; // 页面全局数据
-    componentData: Array<any>;
+    componentData: Array<any>;  // 画布组件数据
     curComponent: any;
-    curComponentZIndex: any;
+    curComponentIndex: any;
     snapshotData: Array<any>; // 编辑器快照数据
     snapshotIndex: number; // 快照索引
-    menuTop: number;
+    menuTop: number; // 右击菜单数据
     menuLeft: number;
     menuShow: boolean;
+    copyData: any, // 复制粘贴剪切
 }
 
 export const editorStore = defineStore('editor', () => {
@@ -32,12 +34,13 @@ export const editorStore = defineStore('editor', () => {
         },
         componentData: [],
         curComponent: null,
-        curComponentZIndex: null,
+        curComponentIndex: null,
         snapshotData: [], // 编辑器快照数据
         snapshotIndex: -1, // 快照索引
         menuTop: 0,
         menuLeft: 0,
         menuShow: false,
+        copyData: null, // 复制粘贴剪切
     });
 
     // ref reactive 就是state
@@ -48,6 +51,60 @@ export const editorStore = defineStore('editor', () => {
     });
 
     // function() 就是actions
+
+    /**
+     * 复制
+     */
+    const copy = () => {
+        editorState.copyData = {
+            data: cloneDeep(editorState.curComponent),
+            index: editorState.curComponentIndex,
+        };
+    };
+
+    /**
+     * 粘贴
+     * @param isMouse
+     */
+    const paste = (isMouse: boolean) => {
+        // 首先判断数据有无
+        if (!editorState.copyData) {
+            toast('没有组件复制数据，请复制组件');
+            return
+        }
+
+        const copyData = editorState.copyData.data;
+
+        if (isMouse) {
+            copyData.style.top = editorState.menuTop;
+            copyData.style.left = editorState.menuLeft;
+        } else {
+            copyData.style.top += 10;
+            copyData.style.left += 10;
+        }
+
+        copyData.id = generateID();
+        addComponent({component: copyData, index: undefined});
+        recordSnapshot();
+        // 复制数据置空
+        editorState.copyData = null
+    };
+
+    /**
+     * 剪切
+     * @param copyData
+     */
+    const cut = (copyData?: any) => {
+        // 当前是否有复制数据
+        // todo：若有复制数据，是否应该直接弃用
+        if (copyData) {
+            addComponent({ component: copyData.data, index: copyData.index });
+        }
+
+        copy();
+        deleteComponent();
+    };
+
     const setEditMode = (mode: string) => {
         editorState.editMode = mode;
     };
@@ -56,13 +113,17 @@ export const editorStore = defineStore('editor', () => {
         editorState.canvasStyleData = style;
     };
 
-    const addComponent = (component: any) => {
-        editorState.componentData.push(component);
+    const addComponent = (data: { component: any, index: number | undefined }) => {
+        if (data.index !== undefined) {
+            editorState.componentData.splice(data.index, 0, data.component)
+        } else {
+            editorState.componentData.push(data.component)
+        }
     };
 
-    const setCurComponent = (data: { component?: any, zIndex: number | null }) => {
+    const setCurComponent = (data: { component?: any, index: number | null }) => {
         editorState.curComponent = data.component;
-        editorState.curComponentZIndex = data.zIndex;
+        editorState.curComponentIndex = data.index;
     };
 
     const setShapeStyle = (pos: { top?:number, left?: number, width?: number, height?: number, rotate?: number }) => {
@@ -123,8 +184,8 @@ export const editorStore = defineStore('editor', () => {
     /**
      * 删除当前组件实例
      */
-    const deleteComponent = () => {
-        editorState.componentData.splice(editorState.curComponentZIndex, 1);
+    const deleteComponent = (index = editorState.curComponentIndex) => {
+        editorState.componentData.splice(index, 1);
     };
 
     /**
@@ -132,8 +193,8 @@ export const editorStore = defineStore('editor', () => {
      */
     const upComponent = () => {
         // 上移图层 zIndex，表示元素在数组中越往后
-        if (editorState.curComponentZIndex < editorState.componentData.length - 1) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex + 1);
+        if (editorState.curComponentIndex < editorState.componentData.length - 1) {
+            swap(editorState.componentData, editorState.curComponentIndex, editorState.curComponentIndex + 1);
         } else {
             toast('已经到顶了');
         }
@@ -144,8 +205,8 @@ export const editorStore = defineStore('editor', () => {
      */
     const downComponent = () => {
         // 下移图层 zIndex，表示元素在数组中越往前
-        if (editorState.curComponentZIndex > 0) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex - 1);
+        if (editorState.curComponentIndex > 0) {
+            swap(editorState.componentData, editorState.curComponentIndex, editorState.curComponentIndex - 1);
         } else {
             toast('已经到底了');
         }
@@ -156,8 +217,8 @@ export const editorStore = defineStore('editor', () => {
      */
     const topComponent = () => {
         // 置顶
-        if (editorState.curComponentZIndex < editorState.componentData.length - 1) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.componentData.length - 1);
+        if (editorState.curComponentIndex < editorState.componentData.length - 1) {
+            swap(editorState.componentData, editorState.curComponentIndex, editorState.componentData.length - 1);
         } else {
             toast('已经到顶了');
         }
@@ -168,8 +229,8 @@ export const editorStore = defineStore('editor', () => {
      */
     const bottomComponent = () => {
         // 置底
-        if (editorState.curComponentZIndex > 0) {
-            swap(editorState.componentData, editorState.curComponentZIndex, 0);
+        if (editorState.curComponentIndex > 0) {
+            swap(editorState.componentData, editorState.curComponentIndex, 0);
         } else {
             toast('已经到底了');
         }
@@ -210,6 +271,9 @@ export const editorStore = defineStore('editor', () => {
     return {
         editorState,
         getCurComponent,
+        copy,
+        paste,
+        cut,
         setEditMode,
         setCanvasStyle,
         addComponent,

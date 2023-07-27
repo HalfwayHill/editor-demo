@@ -1,15 +1,17 @@
 <template>
   <div class="editor" id="editor"
        :class="{ edit: isEdit }"
-       :style="{ width: editorStore.editorState.canvasStyleData.width + 'px', height: editorStore.editorState.canvasStyleData.height + 'px' }">
+       :style="{ width: editorStore.editorState.canvasStyleData.width + 'px', height: editorStore.editorState.canvasStyleData.height + 'px' }"
+       @contextmenu="handleContextMenu"
+  >
     <!--页面组件列表展示-->
     <Shape v-for="(item, index) in editorStore.editorState.componentData"
            :defaultStyle="item.style"
-           :style="getShapeStyle(item.style, index)"
+           :style="getShapeStyle(item.style)"
            :key="item.id"
            :active="item === editorStore.editorState.curComponent"
            :element="item"
-           :zIndex="index"
+           :index="index"
     >
       <component
           v-if="item.component != 'v-text'"
@@ -52,7 +54,28 @@ defineProps({
 
 const editorStore = store.editorStore;
 
-const getShapeStyle = (style: any, index: number) => {
+/**
+ * 显示下拉菜单
+ * @param e
+ */
+const handleContextMenu = (e: any) => {
+  e.stopPropagation();
+  e.preventDefault();
+
+  // 计算菜单相对于编辑器的位移
+  let target = e.target;
+  let top = e.offsetY;
+  let left = e.offsetX;
+  while (!target.className.includes('editor')) {
+    left += target.offsetLeft;
+    top += target.offsetTop;
+    target = target.parentNode;
+  }
+
+  editorStore.showContextMenu({ top, left });
+};
+
+const getShapeStyle = (style: any) => {
   const result = { ...style }
   if (result.width) {
     result.width += 'px';
@@ -73,14 +96,12 @@ const getShapeStyle = (style: any, index: number) => {
   if (result.rotate) {
     result.transform = 'rotate(' + result.rotate + 'deg)';
   }
-  // 按顺序添加 z-index 层级
-  result.zIndex = index;
 
   return result;
 }
 
 const getComponentStyle = (style: any) => {
-  return getStyle(style, ['top', 'left', 'width', 'height', 'zIndex', 'rotate']);
+  return getStyle(style, ['top', 'left', 'width', 'height', 'rotate']);
 }
 
 const handleInput = (element: any, value: any) => {

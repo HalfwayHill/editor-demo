@@ -36,6 +36,6 @@ Object.keys(Icons).forEach(key => {
     app.component(key, Icons[key as keyof typeof Icons])
 })
 
-app.component('Picture',CustomComponent.Picture)
+app.component('VPicture',CustomComponent.Picture)
 app.component('VButton',CustomComponent.VButton)
 app.component('VText',CustomComponent.VText)

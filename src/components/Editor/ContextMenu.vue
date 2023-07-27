@@ -2,19 +2,41 @@
   <div class="contextmenu" v-show="editorStore.editorState.menuShow"
        :style="{ top: editorStore.editorState.menuTop + 'px', left: editorStore.editorState.menuLeft + 'px' }">
     <ul>
-      <li @click="deleteComponent">删除</li>
-      <li @click="topComponent">置顶</li>
-      <li @click="bottomComponent">置底</li>
-      <li @click="upComponent">上移</li>
-      <li @click="downComponent">下移</li>
+      <li @click="copy" v-if="editorStore.editorState.curComponent">复制</li>
+      <li @click="paste">粘贴</li>
+      <li @click="cut" v-if="editorStore.editorState.curComponent">剪切</li>
+      <li @click="deleteComponent" v-if="editorStore.editorState.curComponent">删除</li>
+      <li @click="topComponent" v-if="editorStore.editorState.curComponent">置顶</li>
+      <li @click="bottomComponent" v-if="editorStore.editorState.curComponent">置底</li>
+      <li @click="upComponent" v-if="editorStore.editorState.curComponent">上移</li>
+      <li @click="downComponent" v-if="editorStore.editorState.curComponent">下移</li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
 import store from "@/store";
+import {reactive} from "vue";
 
 const editorStore = store.editorStore;
+
+reactive<{
+  copyData: any
+}>({
+  copyData: null
+});
+
+const copy = () => {
+  editorStore.copy();
+}
+
+const paste = () => {
+  editorStore.paste(true);
+}
+
+const cut = () => {
+  editorStore.cut();
+}
 
 const deleteComponent = () => {
   editorStore.deleteComponent();
