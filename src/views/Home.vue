@@ -157,7 +157,7 @@ const restore = () => {
   }
 
   if (localStorage.getItem('canvasStyle')) {
-    editorStore.setCanvasStyle(resetID(JSON.parse(localStorage.getItem('canvasStyle')!)));
+    editorStore.setCanvasStyle(JSON.parse(localStorage.getItem('canvasStyle')!));
   }
 };
 
@@ -343,7 +343,9 @@ const addEvent = (event: any, param: any) => {
  */
 const removeEvent = (event: any) => {
   editorStore.removeEvent(event);
-}
+};
+
+console.log("HOME");
 
 // 执行初始化
 restore();
