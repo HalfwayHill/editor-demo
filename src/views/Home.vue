@@ -196,7 +196,7 @@ const resetID = (jsonData: any): any => {
     value.id = generateID();
   })
 
-  return data;
+  return jsonData;
 }
 
 /**

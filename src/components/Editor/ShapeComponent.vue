@@ -166,7 +166,7 @@ const handleMouseDownOnShape = (e: any) => {
   }
 
   e.stopPropagation();
-  editorStore.setCurComponent({ component: props.element, zIndex: props.index as number });
+  editorStore.setCurComponent({ component: props.element, index: props.index as number });
   data.cursors = getCursor() // 根据旋转角度获取光标位置
 
   const pos = { ...props.defaultStyle };
