@@ -3,7 +3,6 @@
     <el-icon class="el-icon-refresh-right" v-show="active" @mousedown="handleRotate">
       <RefreshRight />
     </el-icon>
-    <!-- <i class="el-icon-refresh-right" v-show="active" @mousedown="handleRotate"></i> -->
     <div
         class="shape-point"
         v-for="(item, index) in (active? data.pointList : [])"
