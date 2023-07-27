@@ -164,10 +164,10 @@ const init = () => {
  */
 const resetID = (jsonData: any): any => {
   jsonData.forEach((value: any) => {
-    value.id = generateID()
+    value.id = generateID();
   })
 
-  return data
+  return data;
 }
 
 /**
@@ -190,8 +190,8 @@ const handleDrop = (event: any) => {
  * @param e event
  */
 const handleDragOver = (e: any) => {
-  e.preventDefault()
-  e.dataTransfer.dropEffect = 'copy'
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
 }
 
 const deselectCurComponent = () => {
@@ -208,16 +208,16 @@ const redo = () => {
 }
 
 const handleFileChange = (e: any) => {
-  const file = e.target.files[0]
+  const file = e.target.files[0];
   if (!file.type.includes('image')) {
-    toast('只能插入图片', 'error')
+    toast('只能插入图片');
     return
   }
 
   const reader = new FileReader()
   reader.onload = (res: any) => {
-    const fileResult = res.target.result
-    const img = new Image()
+    const fileResult = res.target.result;
+    const img = new Image();
     img.onload = () => {
       editorStore.addComponent({
         id: generateID(),
@@ -235,12 +235,12 @@ const handleFileChange = (e: any) => {
           rotate: '',
         },
       })
-    }
+    };
 
-    img.src = fileResult
+    img.src = fileResult;
   }
 
-  reader.readAsDataURL(file)
+  reader.readAsDataURL(file);
 }
 
 /**
@@ -249,7 +249,7 @@ const handleFileChange = (e: any) => {
  */
 const addAnimation = (animate: any) => {
   editorStore.addAnimation(animate);
-  data.isShowAnimation = false
+  data.isShowAnimation = false;
 }
 
 /**
@@ -268,7 +268,7 @@ const removeAnimation = (index: any) => {
 }
 
 const previewClick = () => {
-  data.isShowPreview = true
+  data.isShowPreview = true;
   editorStore.setEditMode('read');
 }
 
@@ -280,8 +280,8 @@ const handlePreviewChange = () => {
  * 保存画布数据
  */
 const save = () => {
-  localStorage.setItem('canvasData', JSON.stringify(editorStore.editorState.componentData))
-  localStorage.setItem('canvasStyle', JSON.stringify(editorStore.editorState.canvasStyleData))
+  localStorage.setItem('canvasData', JSON.stringify(editorStore.editorState.componentData));
+  localStorage.setItem('canvasStyle', JSON.stringify(editorStore.editorState.canvasStyleData));
   ElMessage.success('保存成功');
 }
 

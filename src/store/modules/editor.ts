@@ -38,32 +38,32 @@ export const editorStore = defineStore('editor', () => {
         menuTop: 0,
         menuLeft: 0,
         menuShow: false,
-    })
+    });
 
     // ref reactive 就是state
 
     //  computed() 就是getters
     const getCurComponent = computed(() => {
         return editorState.curComponent;
-    })
+    });
 
     // function() 就是actions
     const setEditMode = (mode: string) => {
         editorState.editMode = mode;
-    }
+    };
 
     const setCanvasStyle = (style: {width:number,height: number}) => {
         editorState.canvasStyleData = style;
-    }
+    };
 
     const addComponent = (component: any) => {
         editorState.componentData.push(component);
-    }
+    };
 
     const setCurComponent = (data: { component?: any, zIndex: number | null }) => {
         editorState.curComponent = data.component;
         editorState.curComponentZIndex = data.zIndex;
-    }
+    };
 
     const setShapeStyle = (pos: { top?:number, left?: number, width?: number, height?: number, rotate?: number }) => {
         if (pos.top) editorState.curComponent.style.top = pos.top
@@ -71,61 +71,61 @@ export const editorStore = defineStore('editor', () => {
         if (pos.width) editorState.curComponent.style.width = pos.width
         if (pos.height) editorState.curComponent.style.height = pos.height
         if (pos.rotate) editorState.curComponent.style.rotate = pos.rotate
-    }
+    };
 
     const setShapePosStyle = (data: { key: string, value: any }) => {
             editorState.curComponent.style[data.key] = data.value;
-    }
+    };
 
     const undo = () => {
         if (editorState.snapshotIndex >= 0) {
             editorState.snapshotIndex--;
             setComponentData(cloneDeep(editorState.snapshotData[editorState.snapshotIndex]));
         }
-    }
+    };
 
     const redo = () => {
         if (editorState.snapshotIndex < editorState.snapshotData.length - 1) {
             editorState.snapshotIndex++;
             setComponentData(cloneDeep(editorState.snapshotData[editorState.snapshotIndex]));
         }
-    }
+    };
 
     /**
      * 设置画布数据
      */
     const setComponentData = (componentData: any[] = []) =>  {
         editorState.componentData = componentData;
-    }
+    };
 
     /**
      * 重新设置快照
      */
     const recordSnapshot = () => {
         // 添加新的快照
-        editorState.snapshotData[++editorState.snapshotIndex] = cloneDeep(editorState.componentData)
+        editorState.snapshotData[++editorState.snapshotIndex] = cloneDeep(editorState.componentData);
         // 在 undo 过程中，添加新的快照时，要将它后面的快照清理掉
         if (editorState.snapshotIndex < editorState.snapshotData.length - 1) {
-            editorState.snapshotData = editorState.snapshotData.slice(0, editorState.snapshotIndex + 1)
+            editorState.snapshotData = editorState.snapshotData.slice(0, editorState.snapshotIndex + 1);
         }
-    }
+    };
 
     const showContextMenu = (data: { top: number, left: number }) => {
         editorState.menuShow = true;
         editorState.menuTop = data.top;
         editorState.menuLeft = data.left;
-    }
+    };
 
     const hideContextMenu = () => {
-        editorState.menuShow = false
-    }
+        editorState.menuShow = false;
+    };
 
     /**
      * 删除当前组件实例
      */
     const deleteComponent = () => {
-        editorState.componentData.splice(editorState.curComponentZIndex, 1)
-    }
+        editorState.componentData.splice(editorState.curComponentZIndex, 1);
+    };
 
     /**
      * 组件图层上移
@@ -133,11 +133,11 @@ export const editorStore = defineStore('editor', () => {
     const upComponent = () => {
         // 上移图层 zIndex，表示元素在数组中越往后
         if (editorState.curComponentZIndex < editorState.componentData.length - 1) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex + 1)
+            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex + 1);
         } else {
-            toast('已经到顶了', 'error')
+            toast('已经到顶了');
         }
-    }
+    };
 
     /**
      * 组件图层下移
@@ -145,11 +145,11 @@ export const editorStore = defineStore('editor', () => {
     const downComponent = () => {
         // 下移图层 zIndex，表示元素在数组中越往前
         if (editorState.curComponentZIndex > 0) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex - 1)
+            swap(editorState.componentData, editorState.curComponentZIndex, editorState.curComponentZIndex - 1);
         } else {
-            toast('已经到底了', 'error')
+            toast('已经到底了');
         }
-    }
+    };
 
     /**
      * 组件置于顶层
@@ -157,11 +157,11 @@ export const editorStore = defineStore('editor', () => {
     const topComponent = () => {
         // 置顶
         if (editorState.curComponentZIndex < editorState.componentData.length - 1) {
-            swap(editorState.componentData, editorState.curComponentZIndex, editorState.componentData.length - 1)
+            swap(editorState.componentData, editorState.curComponentZIndex, editorState.componentData.length - 1);
         } else {
-            toast('已经到顶了', 'error')
+            toast('已经到顶了');
         }
-    }
+    };
 
     /**
      * 组件置于底层
@@ -169,11 +169,11 @@ export const editorStore = defineStore('editor', () => {
     const bottomComponent = () => {
         // 置底
         if (editorState.curComponentZIndex > 0) {
-            swap(editorState.componentData, editorState.curComponentZIndex, 0)
+            swap(editorState.componentData, editorState.curComponentZIndex, 0);
         } else {
-            toast('已经到底了', 'error')
+            toast('已经到底了');
         }
-    }
+    };
 
     /**
      * 添加动画
@@ -181,7 +181,7 @@ export const editorStore = defineStore('editor', () => {
      */
     const addAnimation = (animation: any) => {
         editorState.curComponent.animations.push(animation)
-    }
+    };
 
     /**
      * 移除动画
@@ -189,7 +189,7 @@ export const editorStore = defineStore('editor', () => {
      */
     const removeAnimation = (index: any) => {
         editorState.curComponent.animations.splice(index, 1)
-    }
+    };
 
     /**
      * 添加事件
@@ -197,7 +197,7 @@ export const editorStore = defineStore('editor', () => {
      */
     const addEvent = (actionParam: { event: any, param: any }) => {
         editorState.curComponent.events[actionParam.event] = actionParam.param
-    }
+    };
 
     /**
      * 移除事件
@@ -205,7 +205,7 @@ export const editorStore = defineStore('editor', () => {
      */
     const removeEvent = (event: any) => {
         delete editorState.curComponent.events[event]
-    }
+    };
 
     return {
         editorState,
