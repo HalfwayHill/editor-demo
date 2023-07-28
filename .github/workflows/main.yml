@@ -32,9 +32,9 @@ jobs:
          version: 6.0.2
 
      - name: Install and Build # 下载依赖 打包项目
-     - run: ｜
-          pnpm install
-          pnpm run build
+       run: ｜
+         pnpm install
+         pnpm run build
 
      - name: Deploy # 将打包内容发布到 github page
        uses: JamesIves/github-pages-deploy-action@v4 # 使用别人写好的actions
