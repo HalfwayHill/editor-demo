@@ -9,23 +9,16 @@ permissions:
  contents: write
 # CI/CD通过执行一个个的Job来完成每个阶段的工作，这里配置每个Jobs
 jobs:
- # Job的名称
- Check:
-  # Runner，github托管的虚拟机环境，用来执行下面的Job命令
-  runs-on: ubuntu-latest
-  steps:
-  # 子步骤名称
-  - name: checkout
-    uses: actions/checkout@v3
-    with:
-      persist-credentials: false
-
  Deploy:
-   needs: Check # 依赖步骤
    runs-on: ubuntu-latest
 
    # Steps represent a sequence of tasks that will be executed as part of the job
    steps:
+     - name: Checkout # 获取源码
+       uses: actions/checkout@v3
+       with:
+         persist-credentials: false
+
      - name: Install pnpm # 安装pnpm
        uses: pnpm/action-setup@v2
        with:
