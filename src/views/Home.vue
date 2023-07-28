@@ -192,7 +192,6 @@ const listenCopyAndPaste = () => {
  * @param jsonData
  */
 const resetID = (jsonData: any): any => {
-  console.log(jsonData);
   jsonData.forEach((value: any) => {
     value.id = generateID();
   });
@@ -342,8 +341,6 @@ const addEvent = (event: any, param: any) => {
 const removeEvent = (event: any) => {
   editorStore.removeEvent(event);
 };
-
-console.log("HOME");
 
 // 执行初始化
 restore();

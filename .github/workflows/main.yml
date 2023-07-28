@@ -18,34 +18,27 @@ jobs:
   - name: checkout
     uses: actions/checkout@v3
     with:
-      node-version: '16'
+      persist-credentials: false
 
  Deploy:
-   needs: Check
-   # The type of runner that the job will run on
+   needs: Check # 依赖步骤
    runs-on: ubuntu-latest
 
    # Steps represent a sequence of tasks that will be executed as part of the job
    steps:
-     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-     - name: checkout
-       uses: actions/checkout@v3
+     - name: Install pnpm # 安装pnpm
+       uses: pnpm/action-setup@v2
        with:
-         node-version: '16'
+         version: 6.0.2
 
-     # Runs a single command using the runners shell
-     - name: build
-       uses: actions/setup-node@v3.5.0
-       with:
-         node-version: "16.X"
-       env:
-         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-         BRANCH: main
-     - run: yarn
-     - run: yarn build
+     - name: Install and Build # 下载依赖 打包项目
+     - run: ｜
+          pnpm install
+          pnpm run build
 
-     - name: deploy
-       uses: JamesIves/github-pages-deploy-action@v4.3.3
-       with:
-         branch: gh-pages
-         folder: dist
+     - name: Deploy # 将打包内容发布到 github page
+       uses: JamesIves/github-pages-deploy-action@v4 # 使用别人写好的actions
+       with: # 自定义环境变量
+         branch: gh-pages # github pages 指定分支
+         folder: dist # build后生成的目录
+         clean: true
