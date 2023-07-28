@@ -32,7 +32,7 @@ jobs:
          version: 6.0.2
 
      - name: Install and Build # 下载依赖 打包项目
-       run: ｜
+       run: |
          pnpm install
          pnpm run build
 
