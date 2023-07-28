@@ -1,4 +1,6 @@
+import defaultImg from '@/assets/title.jpg';
 // 公共样式
+
 const commonStyle = {
     rotate: '',
     opacity: 1,
@@ -57,7 +59,7 @@ const list = [
         component: 'v-picture',
         label: '图片',
         icon: 'PictureRounded',
-        propValue: getImageUrl('../assets/title.jpg'),
+        propValue: getImageUrl(defaultImg),
         animations: [],
         events: {},
         style: {
