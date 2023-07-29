@@ -1,12 +1,15 @@
 <template>
   <div class="bg" v-if="show">
     <el-button @click="close" class="close">关闭</el-button>
-    <div class="canvas" :style="{ width: state.canvasStyleData.width + 'px', height: state.canvasStyleData.height + 'px' }">
-      <ComponentWrapper
-          v-for="(item, index) in state.componentData"
-          :key="index"
-          :config="item"
-      />
+    <div class="canvas-container">
+      <div class="canvas"
+           :style="{ width: state.canvasStyleData.width + 'px', height: state.canvasStyleData.height + 'px' }">
+        <ComponentWrapper
+            v-for="(item, index) in state.componentData"
+            :key="index"
+            :config="item"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -16,12 +19,13 @@ import store from "@/store";
 import ComponentWrapper from "@/components/Editor/ComponentWrapper.vue";
 
 const state = store.editorStore.editorState;
+
 interface Prop {
   show: boolean
 }
 
-const props = defineProps<Prop>()
-const emit = defineEmits(['update:show'])
+defineProps<Prop>();
+const emit = defineEmits(['update:show']);
 
 const close = () => {
   emit('update:show', false);
@@ -43,9 +47,19 @@ const close = () => {
   overflow: auto;
   padding: 20px;
 
-  .canvas {
-    background: #fff;
-    position: relative;
+  .canvas-container {
+    width: calc(100% - 40px);
+    height: calc(100% - 120px);
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .canvas {
+      background: #fff;
+      position: relative;
+      flex-shrink: 0;
+    }
   }
 
   .close {

@@ -13,7 +13,7 @@ export default function getStyle(style: any, filter: any[] = []) {
             if (key != 'rotate') {
                 result[key] = style[key]
 
-                if (!needUnit.includes(key)) {
+                if (needUnit.includes(key)) {
                     result[key] += 'px'
                 }
             } else {
