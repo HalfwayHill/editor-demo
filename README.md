@@ -1,5 +1,7 @@
 # Editor Demo
 
+[项目预览地址](https://halfwayhill.github.io/editor-demo/#/)
+
 ## 技术栈
 
 - Vue3
