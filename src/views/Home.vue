@@ -45,6 +45,7 @@ import {cloneDeep} from "lodash";
 import compList from '@/custom-component/component-list';
 import Toolbar from "@/components/Toolbar.vue";
 import AnimationList from "@/components/AnimationList.vue";
+import EventList from "@/components/EventList.vue";
 
 const editorStore = appStore.editorStore;
 

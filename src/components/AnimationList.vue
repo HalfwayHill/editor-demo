@@ -42,10 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import {reactive} from "vue";
+import {onMounted, reactive} from "vue";
 import animationClassData from "@/utils/animationClassData";
 import appStore from "@/store";
 import emitter from "@/utils/mitt";
+import Modal from "@/components/Modal.vue";
 
 const editorStore = appStore.editorStore;
 
@@ -55,6 +56,10 @@ const data = reactive({
   animationActiveName: '进入',
   showAnimatePanel: false,
   hoverPreviewAnimate: '',
+});
+
+onMounted(() => {
+  data.isShowAnimation = false;
 });
 
 /**

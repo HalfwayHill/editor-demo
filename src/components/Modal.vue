@@ -11,7 +11,8 @@
 interface Prop {
   show: boolean
 }
-const props = defineProps<Prop>()
+
+defineProps<Prop>();
 const emit = defineEmits(['update:show'])
 
 const hide = () => {
