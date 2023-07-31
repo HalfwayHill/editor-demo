@@ -1,22 +1,24 @@
 <template>
-<div class="toolbar">
-  <el-button @click="undo">撤消</el-button>
-  <el-button @click="redo">重做</el-button>
-  <label for="input" class="insert">插入图片</label>
-  <input type="file" @change="handleFileChange" id="input" hidden/>
-  <el-button @click="previewClick" style="margin-left: 10px;">预览</el-button>
-  <el-button @click="save">保存</el-button>
-  <el-button @click="clearCanvas">清空画布</el-button>
-  <div class="canvas-config">
-    <span>画布大小</span>
-    <input v-model="editorStore.editorState.canvasStyleData.width">
-    <span>*</span>
-    <input v-model="editorStore.editorState.canvasStyleData.height">
-  </div>
+  <div>
+    <div class="toolbar">
+      <el-button @click="undo">撤消</el-button>
+      <el-button @click="redo">重做</el-button>
+      <label for="input" class="insert">插入图片</label>
+      <input type="file" @change="handleFileChange" id="input" hidden/>
+      <el-button @click="previewClick" style="margin-left: 10px;">预览</el-button>
+      <el-button @click="save">保存</el-button>
+      <el-button @click="clearCanvas">清空画布</el-button>
+      <div class="canvas-config">
+        <span>画布大小</span>
+        <input v-model="editorStore.editorState.canvasStyleData.width">
+        <span>*</span>
+        <input v-model="editorStore.editorState.canvasStyleData.height">
+      </div>
+    </div>
 
-  <!-- 预览 -->
-  <Preview v-model:show="data.isShowPreview" @change="handlePreviewChange"/>
-</div>
+    <!-- 预览 -->
+    <Preview v-model:show="data.isShowPreview" @change="handlePreviewChange"/>
+  </div>
 </template>
 
 <script setup lang="ts">

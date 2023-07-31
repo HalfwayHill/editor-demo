@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 
-const props = defineProps({
+defineProps({
   propValue: {
     type: String,
     require: true,

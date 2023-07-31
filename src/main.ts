@@ -29,13 +29,13 @@ app.config.globalProperties.lodash = _;
 /** 重置仓库 */
 registerStore()
 
-app.mount('#app')
+app.mount('#app');
 
 // 注册全局组件
 Object.keys(Icons).forEach(key => {
     app.component(key, Icons[key as keyof typeof Icons])
-})
+});
 
-app.component('VPicture',CustomComponent.Picture)
-app.component('VButton',CustomComponent.VButton)
-app.component('VText',CustomComponent.VText)
+app.component('VPicture',CustomComponent.VPicture);
+app.component('VButton',CustomComponent.VButton);
+app.component('VText',CustomComponent.VText);

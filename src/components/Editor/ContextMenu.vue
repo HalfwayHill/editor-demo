@@ -2,14 +2,17 @@
   <div class="contextmenu" v-show="editorStore.editorState.menuShow"
        :style="{ top: editorStore.editorState.menuTop + 'px', left: editorStore.editorState.menuLeft + 'px' }">
     <ul>
-      <li @click="copy" v-if="editorStore.editorState.curComponent">复制</li>
-      <li @click="paste">粘贴</li>
-      <li @click="cut" v-if="editorStore.editorState.curComponent">剪切</li>
-      <li @click="deleteComponent" v-if="editorStore.editorState.curComponent">删除</li>
-      <li @click="topComponent" v-if="editorStore.editorState.curComponent">置顶</li>
-      <li @click="bottomComponent" v-if="editorStore.editorState.curComponent">置底</li>
-      <li @click="upComponent" v-if="editorStore.editorState.curComponent">上移</li>
-      <li @click="downComponent" v-if="editorStore.editorState.curComponent">下移</li>
+      <template v-if="editorStore.editorState.curComponent">
+        <li @click="copy">复制</li>
+        <li @click="paste">粘贴</li>
+        <li @click="cut">剪切</li>
+        <li @click="deleteComponent">删除</li>
+        <li @click="topComponent">置顶</li>
+        <li @click="bottomComponent">置底</li>
+        <li @click="upComponent">上移</li>
+        <li @click="downComponent">下移</li>
+      </template>
+      <li v-else @click="paste">粘贴</li>
     </ul>
   </div>
 </template>
@@ -74,7 +77,7 @@ const bottomComponent = () => {
     border: 1px solid #e4e7ed;
     border-radius: 4px;
     background-color: #fff;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
     box-sizing: border-box;
     margin: 5px 0;
     padding: 6px 0;

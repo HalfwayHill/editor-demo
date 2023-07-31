@@ -62,26 +62,26 @@ onMounted(() => {
 });
 
 const translateComponentStyle = (style: any) => {
-  style = { ...style }
+  style = { ...style };
   if (style.rotate != 0) {
-    const newWidth = style.width * cos(style.rotate) + style.height * sin(style.rotate)
-    const diffX = (style.width - newWidth) / 2 // 旋转后范围变小是正值，变大是负值
-    style.left += diffX
-    style.right = style.left + newWidth
+    const newWidth = style.width * cos(style.rotate) + style.height * sin(style.rotate);
+    const diffX = (style.width - newWidth) / 2; // 旋转后范围变小是正值，变大是负值
+    style.left += diffX;
+    style.right = style.left + newWidth;
 
-    const newHeight = style.height * cos(style.rotate) + style.width * sin(style.rotate)
-    const diffY = (newHeight - style.height) / 2 // 始终是正de
-    style.top -= diffY
-    style.bottom = style.top + newHeight
+    const newHeight = style.height * cos(style.rotate) + style.width * sin(style.rotate);
+    const diffY = (newHeight - style.height) / 2; // 始终是正de
+    style.top -= diffY;
+    style.bottom = style.top + newHeight;
 
-    style.width = newWidth
-    style.height = newHeight
+    style.width = newWidth;
+    style.height = newHeight;
   } else {
-    style.bottom = style.top + style.height
-    style.right = style.left + style.width
+    style.bottom = style.top + style.height;
+    style.right = style.left + style.width;
   }
 
-  return style
+  return style;
 }
 
 /**
@@ -89,7 +89,7 @@ const translateComponentStyle = (style: any) => {
  */
 const hideLine = () => {
   Object.keys(data.lineStatus).forEach(line => {
-    data.lineStatus[line as keyof typeof data.lineStatus] = false
+    data.lineStatus[line as keyof typeof data.lineStatus] = false;
   })
 }
 
@@ -102,18 +102,18 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
   // 获取当前画布中的所有元素
   // const components = document.querySelectorAll('.shape');
   const components = editorStore.editorState.componentData;
-  const curComponentStyle = translateComponentStyle(editorStore.editorState.curComponent.style)
-  const curComponentHalfWidth = curComponentStyle.width / 2
-  const curComponentHalfHeight = curComponentStyle.height / 2
+  const curComponentStyle = translateComponentStyle(editorStore.editorState.curComponent.style);
+  const curComponentHalfWidth = curComponentStyle.width / 2;
+  const curComponentHalfHeight = curComponentStyle.height / 2;
 
   hideLine();
 
   components.forEach(component => {
     if (component == editorStore.editorState.curComponent) return;
-    const componentStyle = translateComponentStyle(component.style)
-    const { top, left, bottom, right } = componentStyle
-    const componentHalfWidth = componentStyle.width / 2
-    const componentHalfHeight = componentStyle.height / 2
+    const componentStyle = translateComponentStyle(component.style);
+    const { top, left, bottom, right } = componentStyle;
+    const componentHalfWidth = componentStyle.width / 2;
+    const componentHalfHeight = componentStyle.height / 2;
 
     const conditions = {
       top: [
@@ -220,12 +220,12 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
 };
 
 const translateCurComponentShift = (key: string, condition: any, curComponentStyle: any) => {
-  const { width, height } = editorStore.editorState.curComponent.style
+  const { width, height } = editorStore.editorState.curComponent.style;
   if (key == 'top') {
-    return Math.round(condition.dragShift - (height - curComponentStyle.height) / 2)
+    return Math.round(condition.dragShift - (height - curComponentStyle.height) / 2);
   }
 
-  return Math.round(condition.dragShift - (width - curComponentStyle.width) / 2)
+  return Math.round(condition.dragShift - (width - curComponentStyle.width) / 2);
 }
 
 /**
@@ -239,39 +239,39 @@ const chooseTheTureLine = (needToShow: any[], isDownward: boolean, isRightward: 
   // 如果鼠标向下移动 则按从下到上的顺序显示横线 否则按相反顺序显示
   if (isRightward) {
     if (needToShow.includes('yr')) {
-      data.lineStatus.yr = true
+      data.lineStatus.yr = true;
     } else if (needToShow.includes('yc')) {
-      data.lineStatus.yc = true
+      data.lineStatus.yc = true;
     } else if (needToShow.includes('yl')) {
-      data.lineStatus.yl = true
+      data.lineStatus.yl = true;
     }
   } else {
     // eslint-disable-next-line no-lonely-if
     if (needToShow.includes('yl')) {
-      data.lineStatus.yl = true
+      data.lineStatus.yl = true;
     } else if (needToShow.includes('yc')) {
-      data.lineStatus.yc = true
+      data.lineStatus.yc = true;
     } else if (needToShow.includes('yr')) {
-      data.lineStatus.yr = true
+      data.lineStatus.yr = true;
     }
   }
 
   if (isDownward) {
     if (needToShow.includes('xb')) {
-      data.lineStatus.xb = true
+      data.lineStatus.xb = true;
     } else if (needToShow.includes('xc')) {
-      data.lineStatus.xc = true
+      data.lineStatus.xc = true;
     } else if (needToShow.includes('xt')) {
-      data.lineStatus.xt = true
+      data.lineStatus.xt = true;
     }
   } else {
     // eslint-disable-next-line no-lonely-if
     if (needToShow.includes('xt')) {
-      data.lineStatus.xt = true
+      data.lineStatus.xt = true;
     } else if (needToShow.includes('xc')) {
-      data.lineStatus.xc = true
+      data.lineStatus.xc = true;
     } else if (needToShow.includes('xb')) {
-      data.lineStatus.xb = true
+      data.lineStatus.xb = true;
     }
   }
 }
@@ -282,7 +282,7 @@ const chooseTheTureLine = (needToShow: any[], isDownward: boolean, isRightward: 
  * @param targetValue 目标元素方位值
  */
 const isNearly = (dragValue: any, targetValue: any) => {
-  return Math.abs(dragValue - targetValue) <= data.diff
+  return Math.abs(dragValue - targetValue) <= data.diff;
 }
 </script>
 

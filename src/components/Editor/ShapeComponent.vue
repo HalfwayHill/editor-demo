@@ -6,7 +6,7 @@
     <div
         class="shape-point"
         v-for="(item, index) in (active? data.pointList : [])"
-        @mousedown="handleMouseDownOnPoint(item)"
+        @mousedown="handleMouseDownOnPoint(item, $event)"
         :key="index"
         :style="getPointStyle(item)">
     </div>
@@ -19,7 +19,6 @@ import {nextTick, onMounted, reactive, ref} from "vue";
 import runAnimation from "@/utils/runAnimation";
 import store from "@/store";
 import emitter from "@/utils/mitt";
-import { getRotatedPointCoordinate } from '@/utils/translate';
 import calculateComponentPositionAndSize from '@/utils/calculateComponentPositionAndSize';
 
 const editorStore = store.editorStore;
@@ -108,10 +107,10 @@ const handleRotate = (e: any) => {
   let hasMove = false;
   const move = (moveEvent: any) => {
     hasMove = true;
-    const currX = moveEvent.clientX;
-    const currY = moveEvent.clientY;
+    const curX = moveEvent.clientX;
+    const curY = moveEvent.clientY;
     // 旋转后的角度
-    const rotateDegreeAfter = Math.atan2(currY - centerY, currX - centerX) / (Math.PI / 180);
+    const rotateDegreeAfter = Math.atan2(curY - centerY, curX - centerX) / (Math.PI / 180);
     // 获取旋转的角度值
     pos.rotate = startRotate + rotateDegreeAfter - rotateDegreeBefore;
     // 修改当前组件样式
@@ -172,10 +171,14 @@ const getCursor = () => {
   // 防止角度有负数，所以 + 360
   const rotate = (editorStore.editorState.curComponent.style.rotate + 360) % 360;
   const result:any = {};
+  let lastMatchIndex = -1; // 从上一个命中的角度的索引开始匹配下一个，降低时间复杂度
   data.pointList.forEach(point => {
-    const angle = (data.initialAngle[point] + rotate) % 360
-    for (let i = 0, len = data.angleToCursor.length; i < len; i++) {
-      const angleLimit = data.angleToCursor[i]
+    const angle = (data.initialAngle[point] + rotate) % 360;
+    const len = data.angleToCursor.length;
+    let i = 0;
+    while (i < len) {
+      lastMatchIndex = (lastMatchIndex + 1) % len;
+      const angleLimit = data.angleToCursor[lastMatchIndex];
       if (angle < 23 || angle >= 338) {
         result[point] = 'nw-resize'
         break
@@ -211,10 +214,10 @@ const handleMouseDownOnShape = (e: any) => {
   let hasMove = false;
   const move = (moveEvent: any) => {
     hasMove = true;
-    const currX = moveEvent.clientX;
-    const currY = moveEvent.clientY;
-    pos.top = currY - startY + startTop;
-    pos.left = currX - startX + startLeft;
+    const curX = moveEvent.clientX;
+    const curY = moveEvent.clientY;
+    pos.top = curY - startY + startTop;
+    pos.left = curX - startX + startLeft;
 
     // 修改当前组件样式
     editorStore.setShapeStyle(pos as { top:number, left: number, width: number, height: number });
@@ -223,9 +226,9 @@ const handleMouseDownOnShape = (e: any) => {
     nextTick(() => {
       // 触发元素移动事件，用于显示标线、吸附功能
       // 后面两个参数代表鼠标移动方向
-      // currY - startY > 0 true 表示向下移动 false 表示向上移动
-      // currX - startX > 0 true 表示向右移动 false 表示向左移动
-      emitter.emit('move', {isDownward:currY - startY > 0, isRightward: currX - startX > 0});
+      // curY - startY > 0 true 表示向下移动 false 表示向上移动
+      // curX - startX > 0 true 表示向右移动 false 表示向左移动
+      emitter.emit('move', {isDownward:curY - startY > 0, isRightward: curX - startX > 0});
     })
   }
 
@@ -248,29 +251,31 @@ const selectCurComponent = (e: any) => {
   editorStore.hideContextMenu();
 }
 
-const handleMouseDownOnPoint = (point: any) => {
+const handleMouseDownOnPoint = (point: any, e: any) => {
   const downEvent = window.event;
   downEvent?.stopPropagation();
   downEvent?.preventDefault();
 
-  const style = { ...props.defaultStyle }
-
+  const style = { ...props.defaultStyle };
   const center = {
     x: style.left + style.width / 2,
     y: style.top + style.height / 2,
-  }
-
-  // 获取点击的点坐标
-  const clickPoint = getRotatedPointCoordinate(style, center, point)
-
-  // 获取对称点的坐标
-  const symmetricPoint = {
-    x: center.x - (clickPoint.x - center.x),
-    y: center.y - (clickPoint.y - center.y),
   };
 
   // 获取画布位移信息
   const editorRectInfo = document?.querySelector('#editor')?.getBoundingClientRect();
+
+  // 当前点击坐标
+  const curPoint = {
+    x: e.clientX - (editorRectInfo?.left as number),
+    y: e.clientY - (editorRectInfo?.top as number),
+  };
+
+  // 获取对称点的坐标
+  const symmetricPoint = {
+    x: center.x - (curPoint.x - center.x),
+    y: center.y - (curPoint.y - center.y),
+  };
 
   // 是否需要保存快照
   let needSave = false
@@ -284,7 +289,7 @@ const handleMouseDownOnPoint = (point: any) => {
 
     calculateComponentPositionAndSize(point, style, curPosition, {
       center,
-      clickPoint,
+      curPoint,
       symmetricPoint,
     });
 
