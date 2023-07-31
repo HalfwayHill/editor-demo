@@ -8,7 +8,7 @@
         v-for="(item, index) in (active? data.pointList : [])"
         @mousedown="handleMouseDownOnPoint(item)"
         :key="index"
-        :style="getPointStyle(item, index)">
+        :style="getPointStyle(item)">
     </div>
     <slot></slot>
   </div>
@@ -48,12 +48,32 @@ const props = defineProps({
 
 const data = reactive<{
   pointList: string[];
-  directions: string[];
-  cursors: any[];
+  initialAngle: any;
+  angleToCursor: { start: number, end: number, cursor: string }[];
+  cursors: any;
 }>({
-  pointList: ['lt', 't', 'rt', 'r', 'lb', 'b', 'rb', 'l'], // 八个方向
-  directions: ['nw', 'n', 'ne', 'e', 'sw', 's', 'se', 'w'], // 光标
-  cursors: [],
+  pointList: ['lt', 't', 'rt', 'r', 'rb', 'b', 'lb', 'l'], // 八个方向
+  initialAngle: { // 每个点对应的初始角度
+    lt: 0,
+    t: 45,
+    rt: 90,
+    r: 135,
+    rb: 180,
+    b: 225,
+    lb: 270,
+    l: 315,
+  },
+  angleToCursor: [ // 每个范围的角度对应的光标
+    { start: 338, end: 23, cursor: 'nw' },
+    { start: 23, end: 68, cursor: 'n' },
+    { start: 68, end: 113, cursor: 'ne' },
+    { start: 113, end: 158, cursor: 'e' },
+    { start: 158, end: 203, cursor: 'se' },
+    { start: 203, end: 248, cursor: 's' },
+    { start: 248, end: 293, cursor: 'sw' },
+    { start: 293, end: 338, cursor: 'w' },
+  ],
+  cursors: {},
 });
 
 onMounted(() => {
@@ -109,7 +129,7 @@ const handleRotate = (e: any) => {
   document.addEventListener('mouseup', up)
 };
 
-const getPointStyle = (point: any, index: number) => {
+const getPointStyle = (point: any) => {
   const height = props.defaultStyle?.height
   const width = props.defaultStyle?.width
   const hasT = /t/.test(point)
@@ -142,7 +162,7 @@ const getPointStyle = (point: any, index: number) => {
     marginTop: '-4px',
     left: `${newLeft}px`,
     top: `${newTop}px`,
-    cursor:  data.cursors[index],
+    cursor: data.cursors[point],
   }
 
   return style
@@ -150,14 +170,25 @@ const getPointStyle = (point: any, index: number) => {
 
 const getCursor = () => {
   // 防止角度有负数，所以 + 360
-  const offsetNum = Math.floor(((editorStore.editorState.curComponent.style.rotate + 360) % 360) / 45) % 8;
-  const directions = data.directions;
-  const newDirections = [
-    ...directions.slice(offsetNum),
-    ...directions.slice(0, offsetNum),
-  ]
+  const rotate = (editorStore.editorState.curComponent.style.rotate + 360) % 360;
+  const result:any = {};
+  data.pointList.forEach(point => {
+    const angle = (data.initialAngle[point] + rotate) % 360
+    for (let i = 0, len = data.angleToCursor.length; i < len; i++) {
+      const angleLimit = data.angleToCursor[i]
+      if (angle < 23 || angle >= 338) {
+        result[point] = 'nw-resize'
+        break
+      }
 
-  return newDirections.map(direction => direction + '-resize');
+      if (angleLimit.start <= angle && angle < angleLimit.end) {
+        result[point] = angleLimit.cursor + '-resize'
+        break
+      }
+    }
+  });
+
+  return result;
 }
 
 const handleMouseDownOnShape = (e: any) => {
