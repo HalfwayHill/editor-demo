@@ -249,7 +249,7 @@ const selectCurComponent = (e: any) => {
   e.stopPropagation();
   e.preventDefault();
   editorStore.hideContextMenu();
-}
+};
 
 const handleMouseDownOnPoint = (point: any, e: any) => {
   const downEvent = window.event;
@@ -278,14 +278,22 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   };
 
   // 是否需要保存快照
-  let needSave = false
+  let needSave = false;
+  let isFirst = true;
   const move = (moveEvent: MouseEvent) => {
+    // 第一次点击时也会触发 move，所以会有“刚点击组件但未移动，组件的大小却改变了”的情况发生
+    // 因此第一次点击时不触发 move 事件
+    if (isFirst) {
+      isFirst = false;
+      return;
+    }
+
     needSave = true;
 
     const curPosition = {
       x: moveEvent.clientX - (editorRectInfo?.left as number),
       y: moveEvent.clientY - (editorRectInfo?.top as number),
-    }
+    };
 
     calculateComponentPositionAndSize(point, style, curPosition, {
       center,
@@ -294,13 +302,13 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
     });
 
     editorStore.setShapeStyle(style);
-  }
+  };
 
   const up = () => {
     document.removeEventListener('mousemove', move);
     document.removeEventListener('mouseup', up);
     needSave && editorStore.recordSnapshot();
-  }
+  };
 
   document.addEventListener('mousemove', move);
   document.addEventListener('mouseup', up);
