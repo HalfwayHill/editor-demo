@@ -175,18 +175,18 @@ const getCursor = () => {
   data.pointList.forEach(point => {
     const angle = (data.initialAngle[point] + rotate) % 360;
     const len = data.angleToCursor.length;
-    let i = 0;
-    while (i < len) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
       lastMatchIndex = (lastMatchIndex + 1) % len;
       const angleLimit = data.angleToCursor[lastMatchIndex];
       if (angle < 23 || angle >= 338) {
-        result[point] = 'nw-resize'
-        break
+        result[point] = 'nw-resize';
+        return;
       }
 
       if (angleLimit.start <= angle && angle < angleLimit.end) {
-        result[point] = angleLimit.cursor + '-resize'
-        break
+        result[point] = angleLimit.cursor + '-resize';
+        return;
       }
     }
   });
