@@ -94,11 +94,19 @@ export const editorStore = defineStore('editor', () => {
      * 剪切
      * @param copyData
      */
-    const cut = (copyData?: any) => {
+    const cut = () => {
+        if (editorState.curComponent) {
+            toast('请选择组件');
+            return;
+        }
         // 当前是否有复制数据
         // todo：若有复制数据，是否应该直接弃用
-        if (copyData) {
-            addComponent({ component: copyData.data, index: copyData.index });
+        if (editorState.copyData) {
+            addComponent({ component: editorState.copyData.data, index: editorState.copyData.index });
+            if (editorState.curComponentIndex >= editorState.copyData.index) {
+                // 如果当前组件索引大于等于插入索引，需要加一，因为当前组件往后移了一位
+                editorState.curComponentIndex++;
+            }
         }
 
         copy();
