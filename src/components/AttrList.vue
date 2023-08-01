@@ -15,7 +15,7 @@
         </el-select>
         <el-input type="number" v-else v-model="curComponent.style[key]" />
       </el-form-item>
-      <el-form-item label="内容" v-if="curComponent && curComponent.propValue && !attribute.excludes.includes(curComponent.component)">
+      <el-form-item label="内容" v-if="curComponent && !attribute.excludes.includes(curComponent.component)">
         <el-input type="textarea" v-model="curComponent.propValue" />
       </el-form-item>
     </el-form>
