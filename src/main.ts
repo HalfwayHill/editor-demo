@@ -39,3 +39,4 @@ Object.keys(Icons).forEach(key => {
 app.component('VPicture',CustomComponent.VPicture);
 app.component('VButton',CustomComponent.VButton);
 app.component('VText',CustomComponent.VText);
+app.component('VGroup',CustomComponent.VGroup);

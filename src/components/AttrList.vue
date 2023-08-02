@@ -26,11 +26,10 @@
 import {computed, reactive} from "vue";
 import store from "@/store";
 
-// todo ‘内容’填写框没有内容就会消失
 const editorStore = store.editorStore;
 
 const attribute = reactive({
-  excludes: ['Picture'], // 这些组件不显示内容
+  excludes: ['VPicture', 'VGroup'], // 这些组件不显示内容
   options: [
     {
       label: '左对齐',

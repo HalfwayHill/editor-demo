@@ -15,7 +15,7 @@
 import {onMounted, reactive} from "vue";
 import store from "@/store";
 import emitter from "@/utils/mitt";
-import { sin, cos } from '@/utils/translate';
+import { getComponentRotatedStyle } from '@/utils/style';
 
 const editorStore = store.editorStore;
 
@@ -61,29 +61,6 @@ onMounted(() => {
   });
 });
 
-const translateComponentStyle = (style: any) => {
-  style = { ...style };
-  if (style.rotate != 0) {
-    const newWidth = style.width * cos(style.rotate) + style.height * sin(style.rotate);
-    const diffX = (style.width - newWidth) / 2; // 旋转后范围变小是正值，变大是负值
-    style.left += diffX;
-    style.right = style.left + newWidth;
-
-    const newHeight = style.height * cos(style.rotate) + style.width * sin(style.rotate);
-    const diffY = (newHeight - style.height) / 2; // 始终是正de
-    style.top -= diffY;
-    style.bottom = style.top + newHeight;
-
-    style.width = newWidth;
-    style.height = newHeight;
-  } else {
-    style.bottom = style.top + style.height;
-    style.right = style.left + style.width;
-  }
-
-  return style;
-}
-
 /**
  * 隐藏线条
  */
@@ -102,7 +79,7 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
   // 获取当前画布中的所有元素
   // const components = document.querySelectorAll('.shape');
   const components = editorStore.editorState.componentData;
-  const curComponentStyle = translateComponentStyle(editorStore.editorState.curComponent.style);
+  const curComponentStyle = getComponentRotatedStyle(editorStore.editorState.curComponent.style);
   const curComponentHalfWidth = curComponentStyle.width / 2;
   const curComponentHalfHeight = curComponentStyle.height / 2;
 
@@ -110,7 +87,7 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
 
   components.forEach(component => {
     if (component == editorStore.editorState.curComponent) return;
-    const componentStyle = translateComponentStyle(component.style);
+    const componentStyle = getComponentRotatedStyle(component.style);
     const { top, left, bottom, right } = componentStyle;
     const componentHalfWidth = componentStyle.width / 2;
     const componentHalfHeight = componentStyle.height / 2;

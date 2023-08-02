@@ -8,6 +8,8 @@
       <el-button @click="previewClick" style="margin-left: 10px;">预览</el-button>
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空画布</el-button>
+      <el-button @click="compose">组合</el-button>
+      <el-button @click="decompose">拆分</el-button>
       <div class="canvas-config">
         <span>画布大小</span>
         <input v-model="editorStore.editorState.canvasStyleData.width">
@@ -28,12 +30,21 @@ import {reactive} from "vue";
 import toast from "@/utils/toast";
 import generateID from "@/utils/generateID";
 import {ElMessage} from "element-plus";
+import { commonStyle, commonAttr } from '@/custom-component/component-list';
 
 const editorStore = appStore.editorStore;
 
 const data = reactive({
   isShowPreview: false,
 });
+
+const compose = () => {
+  editorStore.compose();
+};
+
+const decompose = () => {
+  editorStore.decompose();
+};
 
 const undo = () => {
   editorStore.undo();
@@ -57,19 +68,18 @@ const handleFileChange = (e: any) => {
     img.onload = () => {
       editorStore.addComponent({
         component: {
+          ...commonAttr,
           id: generateID(),
           component: 'v-picture',
           label: '图片',
           icon: '',
           propValue: fileResult,
-          animations: [],
-          events: [],
           style: {
+            ...commonStyle,
             top: 0,
             left: 0,
             width: img.width,
             height: img.height,
-            rotate: '',
           },
         },
         index: undefined

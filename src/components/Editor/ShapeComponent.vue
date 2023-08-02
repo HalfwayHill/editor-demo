@@ -5,9 +5,9 @@
     </el-icon>
     <div
         class="shape-point"
-        v-for="(item, index) in (active? data.pointList : [])"
+        v-for="item in (active? data.pointList : [])"
         @mousedown="handleMouseDownOnPoint(item, $event)"
-        :key="index"
+        :key="item"
         :style="getPointStyle(item)">
     </div>
     <slot></slot>
@@ -88,7 +88,8 @@ onMounted(() => {
  * @param e
  */
 const handleRotate = (e: any) => {
-  e.stopPropagation()
+  e.preventDefault();
+  e.stopPropagation();
   // 初始坐标和初始角度
   const pos = { ...props.defaultStyle };
   const startY = e.clientY;
@@ -196,12 +197,12 @@ const getCursor = () => {
 
 const handleMouseDownOnShape = (e: any) => {
   if (props.element?.component != 'v-text') {
-    e.preventDefault()
+    e.preventDefault();
   }
 
   e.stopPropagation();
   editorStore.setCurComponent({ component: props.element, index: props.index as number });
-  data.cursors = getCursor() // 根据旋转角度获取光标位置
+  data.cursors = getCursor(); // 根据旋转角度获取光标位置
 
   const pos = { ...props.defaultStyle };
   const startY = e.clientY;
@@ -229,8 +230,8 @@ const handleMouseDownOnShape = (e: any) => {
       // curY - startY > 0 true 表示向下移动 false 表示向上移动
       // curX - startX > 0 true 表示向右移动 false 表示向左移动
       emitter.emit('move', {isDownward:curY - startY > 0, isRightward: curX - startX > 0});
-    })
-  }
+    });
+  };
 
   const up = () => {
     hasMove && editorStore.recordSnapshot();
@@ -238,7 +239,7 @@ const handleMouseDownOnShape = (e: any) => {
     emitter.emit('unMove');
     document.removeEventListener('mousemove', move);
     document.removeEventListener('mouseup', up);
-  }
+  };
 
   document.addEventListener('mousemove', move);
   document.addEventListener('mouseup', up);
@@ -263,7 +264,7 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   };
 
   // 获取画布位移信息
-  const editorRectInfo = document?.querySelector('#editor')?.getBoundingClientRect();
+  const editorRectInfo = editorStore.editorState.editor.getBoundingClientRect();
 
   // 当前点击坐标
   const curPoint = {

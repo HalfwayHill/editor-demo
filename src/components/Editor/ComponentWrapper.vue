@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import runAnimation from "@/utils/runAnimation";
-import getStyle from "@/utils/style";
+import { getStyle } from "@/utils/style";
 import {events} from "@/utils/events";
 
 interface Prop {

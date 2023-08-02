@@ -1,9 +1,12 @@
 import {defineStore} from 'pinia'
 import {computed, reactive} from 'vue'
 import {cloneDeep} from "lodash";
-import {swap} from "@/utils/utils";
+import {swap, $} from "@/utils/utils";
 import toast from "@/utils/toast";
 import generateID from '@/utils/generateID';
+import {decomposeComponent} from "@/utils/style";
+import emitter from "@/utils/mitt";
+import {commonAttr, commonStyle} from "@/custom-component/component-list";
 
 
 interface CanvasStyleData{
@@ -23,6 +26,16 @@ interface EditorState {
     menuLeft: number;
     menuShow: boolean;
     copyData: any, // 复制粘贴剪切
+    areaData: {
+        style: {
+            top: number,
+            left: number,
+            width: number,
+            height: number,
+        },
+        components: any[],
+    },
+    editor: any,
 }
 
 export const editorStore = defineStore('editor', () => {
@@ -41,6 +54,16 @@ export const editorStore = defineStore('editor', () => {
         menuLeft: 0,
         menuShow: false,
         copyData: null, // 复制粘贴剪切
+        areaData: {
+            style: {
+                top: 0,
+                left: 0,
+                width: 0,
+                height: 0,
+            },
+            components: [],
+        },
+        editor: null,
     });
 
     // ref reactive 就是state
@@ -51,6 +74,86 @@ export const editorStore = defineStore('editor', () => {
     });
 
     // function() 就是actions
+
+    const getEditor = () => {
+        editorState.editor = $('#editor');
+    };
+
+    const setAreaData = (data: any) => {
+        editorState.areaData = data;
+    };
+
+    const compose = () => {
+        const components: any[] = [];
+        editorState.areaData.components.forEach(component => {
+            if (component.component != 'VGroup') {
+                components.push(component);
+            } else {
+                // 如果要组合的组件中，已经存在组合数据，则需要提前拆分
+                const parentStyle = { ...component.style };
+                const subComponents: any[] = component.propValue;
+                const editorRect = editorState.editor.getBoundingClientRect();
+
+                deleteComponent();
+                subComponents.forEach(subComponent => {
+                    decomposeComponent(subComponent, editorRect, parentStyle);
+                    addComponent({ component: subComponent, index: undefined });
+                })
+
+                components.push(...component.propValue);
+                batchDeleteComponent(component.propValue);
+            }
+        });
+
+        addComponent({
+            component: {
+                id: generateID(),
+                component: 'VGroup',
+                ...commonAttr,
+                style: {
+                    ...commonStyle,
+                    ...editorState.areaData.style,
+                },
+                propValue: components,
+            },
+            index: undefined
+        });
+
+        emitter.emit('hideArea');
+
+        batchDeleteComponent(editorState.areaData.components);
+        setCurComponent({
+            component: editorState.componentData[editorState.componentData.length - 1],
+            index: editorState.componentData.length - 1,
+        });
+
+        editorState.areaData.components = [];
+    };
+
+    const batchDeleteComponent =(deleteData: any[]) => {
+        console.log("componentData", editorState.componentData);
+        console.log("deleteData", deleteData);
+        deleteData.forEach(component => {
+            for (let i = 0, len = editorState.componentData.length; i < len; i++) {
+                if (component.id == editorState.componentData[i].id) {
+                    editorState.componentData.splice(i, 1);
+                    break
+                }
+            }
+        })
+    };
+
+    const decompose = () => {
+        const parentStyle = { ...editorState.curComponent.style };
+        const components: any[] = editorState.curComponent.propValue;
+        const editorRect = editorState.editor.getBoundingClientRect();
+
+        deleteComponent();
+        components.forEach(component => {
+            decomposeComponent(component, editorRect, parentStyle);
+            addComponent({component ,index: undefined});
+        })
+    };
 
     /**
      * 复制
@@ -279,6 +382,11 @@ export const editorStore = defineStore('editor', () => {
     return {
         editorState,
         getCurComponent,
+        getEditor,
+        setAreaData,
+        compose,
+        batchDeleteComponent,
+        decompose,
         copy,
         paste,
         cut,

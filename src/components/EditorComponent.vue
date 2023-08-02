@@ -3,6 +3,7 @@
        :class="{ edit: isEdit }"
        :style="{ width: editorStore.editorState.canvasStyleData.width + 'px', height: editorStore.editorState.canvasStyleData.height + 'px' }"
        @contextmenu="handleContextMenu"
+       @mousedown="handleMouseDown"
   >
     <!--页面组件列表展示-->
     <Shape v-for="(item, index) in editorStore.editorState.componentData"
@@ -19,6 +20,7 @@
           :is="item.component"
           :style="getComponentStyle(item.style)"
           :propValue="item.propValue"
+          :element="item"
       />
 
       <component
@@ -35,6 +37,8 @@
     <ContextMenu />
     <!-- 标线 -->
     <MarkLine />
+    <!-- 选中区域 -->
+    <AreaComponent :start="data.start" :width="data.width" :height="data.height" v-show="data.isShowArea" />
   </div>
 </template>
 
@@ -42,17 +46,140 @@
 import ContextMenu from "@/components/Editor/ContextMenu.vue";
 import MarkLine from "@/components/Editor/MarkLine.vue";
 import Shape from "@/components/Editor/ShapeComponent.vue";
+import AreaComponent from "@/components/Editor/AreaComponent.vue";
 import store from "@/store";
-import getStyle from "@/utils/style";
+import { getStyle, getComponentRotatedStyle } from '@/utils/style';
+import emitter from "@/utils/mitt";
+import {onMounted, reactive} from "vue";
 
 defineProps({
   isEdit: {
     type: Boolean,
     default: true,
   },
+});
+
+const data = reactive({
+  editorX: 0,
+  editorY: 0,
+  start: { // 选中区域的起点
+    x: 0,
+    y: 0,
+  },
+  width: 0,
+  height: 0,
+  isShowArea: false,
 })
 
 const editorStore = store.editorStore;
+
+onMounted(() => {
+  // 获取编辑器元素
+  editorStore.getEditor();
+  const info = editorStore.editorState.editor.getBoundingClientRect()
+  data.editorX = info.x
+  data.editorY = info.y
+
+  emitter.on('hideArea', () => {
+    hideArea();
+  })
+});
+
+const handleMouseDown = (e: any) => {
+  e.preventDefault();
+  hideArea();
+
+  const startX = e.clientX;
+  const startY = e.clientY;
+  data.start.x = startX - data.editorX;
+  data.start.y = startY - data.editorY;
+  data.isShowArea = true;
+
+  const move = (moveEvent: any) => {
+    data.width = Math.abs(moveEvent.clientX - startX);
+    data.height = Math.abs(moveEvent.clientY - startY);
+    if (moveEvent.clientX < startX) {
+      data.start.x = moveEvent.clientX - data.editorX;
+    }
+
+    if (moveEvent.clientY < startY) {
+      data.start.y = moveEvent.clientY - data.editorY;
+    }
+  }
+
+  const up = (e: any) => {
+    document.removeEventListener('mousemove', move);
+    document.removeEventListener('mouseup', up);
+
+    if (e.clientX == startX && e.clientY == startY) {
+      hideArea();
+      return
+    }
+
+    createGroup()
+  }
+
+  document.addEventListener('mousemove', move)
+  document.addEventListener('mouseup', up)
+};
+
+/**
+ * 隐藏组合区域
+ */
+const hideArea = () => {
+  data.isShowArea = false;
+  data.width = 0;
+  data.height = 0;
+};
+
+/**
+ * 创造组合元素
+ */
+const createGroup = () => {
+  const areaData = getSelectArea();
+  if (areaData.length <= 1) {
+    hideArea();
+    return;
+  }
+
+  let top = Infinity, left = Infinity;
+  let right = -Infinity, bottom = -Infinity;
+  areaData.forEach(component => {
+    const style = getComponentRotatedStyle(component.style);
+    if (style.left < left) left = style.left;
+    if (style.top < top) top = style.top;
+    if (style.right > right) right = style.right;
+    if (style.bottom > bottom) bottom = style.bottom;
+  })
+
+  data.start.x = left;
+  data.start.y = top;
+  data.width = right - left;
+  data.height = bottom - top;
+
+  editorStore.setAreaData({
+    style: {
+      left,
+      top,
+      width: data.width,
+      height: data.height,
+    },
+    components: areaData,
+  });
+};
+
+const getSelectArea = () => {
+  const result: any[] = [];
+  const { x, y } = data.start;
+  editorStore.editorState.componentData.forEach(component => {
+    const { left, top, width, height } = component.style;
+    if (x <= left && y <= top && (left + width <= x + data.width) && (top + height <= y + data.height)) {
+      result.push(component);
+    }
+  })
+
+  return result;
+};
 
 /**
  * 显示下拉菜单
