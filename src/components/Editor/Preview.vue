@@ -66,7 +66,7 @@ const close = () => {
 
   .close {
     position: absolute;
-    right: 20px;
+    right: 100px;
     top: 20px;
   }
 }
