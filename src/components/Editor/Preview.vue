@@ -3,7 +3,12 @@
     <el-button @click="close" class="close">关闭</el-button>
     <div class="canvas-container">
       <div class="canvas"
-           :style="{ width: state.canvasStyleData.width + 'px', height: state.canvasStyleData.height + 'px' }">
+           :style="
+           {
+             width: state.canvasStyleData.width + 'px',
+             height: state.canvasStyleData.height + 'px',
+             transform: 'scale(' + state.canvasStyleData.scale / 100 + ')'
+           }">
         <ComponentWrapper
             v-for="(item, index) in state.componentData"
             :key="index"
