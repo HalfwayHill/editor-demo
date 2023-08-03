@@ -16,6 +16,10 @@
         <span>*</span>
         <input v-model="editorStore.editorState.canvasStyleData.height">
       </div>
+      <div class="canvas-config">
+        <span>画布比例</span>
+        <input v-model="editorStore.editorState.canvasStyleData.scale"> %
+      </div>
     </div>
 
     <!-- 预览 -->

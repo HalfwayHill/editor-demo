@@ -1,7 +1,11 @@
 <template>
   <div class="editor" id="editor"
        :class="{ edit: isEdit }"
-       :style="{ width: editorStore.editorState.canvasStyleData.width + 'px', height: editorStore.editorState.canvasStyleData.height + 'px' }"
+       :style="{
+          width: editorStore.editorState.canvasStyleData.width + 'px',
+          height: editorStore.editorState.canvasStyleData.height + 'px',
+          transform: 'scale(' + editorStore.editorState.canvasStyleData.scale / 100 + ')'
+      }"
        @contextmenu="handleContextMenu"
        @mousedown="handleMouseDown"
   >
@@ -34,11 +38,11 @@
       />
     </Shape>
     <!-- 右击菜单 -->
-    <ContextMenu />
+    <ContextMenu/>
     <!-- 标线 -->
-    <MarkLine />
+    <MarkLine/>
     <!-- 选中区域 -->
-    <AreaComponent :start="data.start" :width="data.width" :height="data.height" v-show="data.isShowArea" />
+    <AreaComponent :start="data.start" :width="data.width" :height="data.height" v-show="data.isShowArea"/>
   </div>
 </template>
 
@@ -48,7 +52,7 @@ import MarkLine from "@/components/Editor/MarkLine.vue";
 import Shape from "@/components/Editor/ShapeComponent.vue";
 import AreaComponent from "@/components/Editor/AreaComponent.vue";
 import store from "@/store";
-import { getStyle, getComponentRotatedStyle } from '@/utils/style';
+import {getStyle, getComponentRotatedStyle} from '@/utils/style';
 import emitter from "@/utils/mitt";
 import {onMounted, reactive} from "vue";
 
@@ -170,9 +174,9 @@ const createGroup = () => {
 
 const getSelectArea = () => {
   const result: any[] = [];
-  const { x, y } = data.start;
+  const {x, y} = data.start;
   editorStore.editorState.componentData.forEach(component => {
-    const { left, top, width, height } = component.style;
+    const {left, top, width, height} = component.style;
     if (x <= left && y <= top && (left + width <= x + data.width) && (top + height <= y + data.height)) {
       result.push(component);
     }
@@ -199,7 +203,7 @@ const handleContextMenu = (e: any) => {
     target = target.parentNode;
   }
 
-  editorStore.showContextMenu({ top, left });
+  editorStore.showContextMenu({top, left});
 };
 
 const getShapeStyle = (style: any) => {
@@ -222,17 +226,17 @@ const getComponentStyle = (style: any) => {
 const handleInput = (element: any, value: any) => {
   element.propValue = value;
   // 根据文本组件高度调整 shape 高度
-  editorStore.setShapeStyle({ height: getTextareaHeight(element, value) });
+  editorStore.setShapeStyle({height: getTextareaHeight(element, value)});
 }
 
 const getTextareaHeight = (element: any, text: any) => {
-  let { lineHeight, fontSize, height } = element.style;
+  let {lineHeight, fontSize, height} = element.style;
   if (lineHeight === '') {
     lineHeight = 1.5;
   }
 
   const newHeight = text.split('\n').length * lineHeight * fontSize;
-  return height > newHeight? height : newHeight;
+  return height > newHeight ? height : newHeight;
 }
 </script>
 
@@ -242,6 +246,7 @@ const getTextareaHeight = (element: any, text: any) => {
   background: #fff;
   flex-shrink: 0;
 }
+
 .edit {
   .component {
     outline: none;

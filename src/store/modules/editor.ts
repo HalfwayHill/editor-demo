@@ -12,6 +12,7 @@ import {commonAttr, commonStyle} from "@/custom-component/component-list";
 interface CanvasStyleData{
     width: number;
     height: number;
+    scale: number;
 }
 
 interface EditorState {
@@ -44,6 +45,7 @@ export const editorStore = defineStore('editor', () => {
         canvasStyleData: { // 页面全局数据
             width: 1200,
             height: 740,
+            scale: 100,
         },
         componentData: [],
         curComponent: null,
@@ -220,7 +222,7 @@ export const editorStore = defineStore('editor', () => {
         editorState.editMode = mode;
     };
 
-    const setCanvasStyle = (style: {width:number,height: number}) => {
+    const setCanvasStyle = (style: CanvasStyleData) => {
         editorState.canvasStyleData = style;
     };
 
