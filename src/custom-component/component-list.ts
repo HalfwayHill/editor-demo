@@ -24,7 +24,7 @@ const list = [
             top:0,
             left:0,
             width: 200,
-            height: 33,
+            height: 22,
             fontSize: 14,
             fontWeight: 500,
             lineHeight: '',

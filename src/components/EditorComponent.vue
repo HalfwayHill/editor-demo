@@ -25,6 +25,7 @@
           :style="getComponentStyle(item.style)"
           :propValue="item.propValue"
           :element="item"
+          :id="'component' + item.id"
       />
 
       <component
@@ -35,6 +36,7 @@
           :propValue="item.propValue"
           @input="handleInput"
           :element="item"
+          :id="'component' + item.id"
       />
     </Shape>
     <!-- 右击菜单 -->
@@ -90,7 +92,6 @@ onMounted(() => {
 });
 
 const handleMouseDown = (e: any) => {
-  e.preventDefault();
   hideArea();
 
   const startX = e.clientX;
@@ -224,7 +225,6 @@ const getComponentStyle = (style: any) => {
 }
 
 const handleInput = (element: any, value: any) => {
-  element.propValue = value;
   // 根据文本组件高度调整 shape 高度
   editorStore.setShapeStyle({height: getTextareaHeight(element, value)});
 }
@@ -235,7 +235,7 @@ const getTextareaHeight = (element: any, text: any) => {
     lineHeight = 1.5;
   }
 
-  const newHeight = text.split('\n').length * lineHeight * fontSize;
+  const newHeight = (text.split('<br>').length - 1) * lineHeight * fontSize;
   return height > newHeight ? height : newHeight;
 }
 </script>
