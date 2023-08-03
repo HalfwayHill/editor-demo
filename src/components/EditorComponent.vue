@@ -244,7 +244,7 @@ const getTextareaHeight = (element: any, text: any) => {
 .editor {
   position: relative;
   background: #fff;
-  flex-shrink: 0;
+  margin: auto;
 }
 
 .edit {
