@@ -44,10 +44,12 @@ const data = reactive({
 
 const compose = () => {
   editorStore.compose();
+  editorStore.recordSnapshot();
 };
 
 const decompose = () => {
   editorStore.decompose();
+  editorStore.recordSnapshot();
 };
 
 const undo = () => {

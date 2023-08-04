@@ -35,6 +35,7 @@ const copy = () => {
 
 const paste = () => {
   editorStore.paste(true);
+  editorStore.recordSnapshot();
 }
 
 const cut = () => {

@@ -82,6 +82,7 @@ const listenCopyAndPaste = () => {
       editorStore.copy();
     } else if (isCtrlDown && e.keyCode == vKey) {
       editorStore.paste(false);
+      editorStore.recordSnapshot();
     } else if (isCtrlDown && e.keyCode == xKey) {
       editorStore.cut();
     }

@@ -190,7 +190,6 @@ export const editorStore = defineStore('editor', () => {
 
         copyData.id = generateID();
         addComponent({component: copyData, index: undefined});
-        recordSnapshot();
         // 复制数据置空
         editorState.copyData = null
     };
