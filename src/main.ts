@@ -40,3 +40,4 @@ app.component('VPicture',CustomComponent.VPicture);
 app.component('VButton',CustomComponent.VButton);
 app.component('VText',CustomComponent.VText);
 app.component('VGroup',CustomComponent.VGroup);
+app.component('RectShape',CustomComponent.RectShape);

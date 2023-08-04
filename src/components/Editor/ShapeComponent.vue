@@ -196,7 +196,7 @@ const getCursor = () => {
 }
 
 const handleMouseDownOnShape = (e: any) => {
-  if (props.element?.component != 'v-text') {
+  if (props.element?.component != 'v-text' && props.element?.component != 'rect-shape') {
     e.preventDefault();
   }
 
