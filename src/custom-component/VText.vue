@@ -13,7 +13,6 @@
 
 <script setup lang="ts">
 import appStore from "@/store";
-import { clearStyle } from '@/utils/style'
 import {reactive, ref} from "vue";
 
 const editorStore = appStore.editorStore;
@@ -58,7 +57,12 @@ const stopPropagation2 = (e: any) => {
 };
 
 const clearStyleFn = (e: any) => {
-  clearStyle(e);
+  e.preventDefault();
+  const clp = e.clipboardData;
+  const text = clp.getData('text/plain') || '';
+  if (text !== '') {
+    document.execCommand('insertText', false, text);
+  }
   emit('input:show', props.element, e.target.innerHTML)
 };
 

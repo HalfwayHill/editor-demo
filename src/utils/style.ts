@@ -88,12 +88,3 @@ export function decomposeComponent(component: any, editorRect: any, parentStyle:
     component.style.rotate = (component.style.rotate + parentStyle.rotate + 360) % 360;
     component.groupStyle = {};
 }
-
-export function clearStyle(e: any) {
-    e.preventDefault();
-    const clp = e.clipboardData;
-    const text = clp.getData('text/plain') || '';
-    if (text !== '') {
-        document.execCommand('insertText', false, text);
-    }
-}
