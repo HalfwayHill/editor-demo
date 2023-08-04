@@ -93,7 +93,8 @@ onMounted(() => {
 
 const handleMouseDown = (e: any) => {
   // 如果没有选中组件 在画布上点击时需要调用 e.preventDefault() 防止触发 drop 事件
-  if (!editorStore.editorState.curComponent) {
+  const curCom = editorStore.editorState.curComponent;
+  if (!curCom || (curCom.component != 'v-text' && curCom.component != 'rect-shape')) {
     e.preventDefault();
   }
   hideArea();

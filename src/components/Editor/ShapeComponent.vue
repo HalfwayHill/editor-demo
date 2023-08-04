@@ -76,6 +76,11 @@ const data = reactive<{
 });
 
 onMounted(() => {
+  // 用于 Group 组件
+  if (editorStore.editorState.curComponent) {
+    data.cursors = getCursor(); // 根据旋转角度获取光标位置
+  }
+
   emitter.on('runAnimation', () => {
     if (props.element === editorStore.getCurComponent && thisRef.value !== undefined) {
       runAnimation(thisRef.value, editorStore.getCurComponent.animations);
@@ -253,9 +258,8 @@ const selectCurComponent = (e: any) => {
 };
 
 const handleMouseDownOnPoint = (point: any, e: any) => {
-  const downEvent = window.event;
-  downEvent?.stopPropagation();
-  downEvent?.preventDefault();
+  e.stopPropagation()
+  e.preventDefault()
 
   const style = { ...props.defaultStyle };
   const center = {
@@ -335,6 +339,7 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  z-index: 1;
 }
 .el-icon-refresh-right {
   position: absolute;
