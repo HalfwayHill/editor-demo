@@ -9,7 +9,7 @@
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空画布</el-button>
       <el-button @click="compose" :disabled="!editorStore.editorState.areaData.components.length">组合</el-button>
-      <el-button @click="decompose" :disabled="!editorStore.editorState.curComponent || editorStore.editorState.curComponent.component != 'Group'">拆分</el-button>
+      <el-button @click="decompose" :disabled="!editorStore.editorState.curComponent || editorStore.editorState.curComponent.component != 'VGroup'">拆分</el-button>
       <div class="canvas-config">
         <span>画布大小</span>
         <input v-model="editorStore.editorState.canvasStyleData.width">

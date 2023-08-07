@@ -262,6 +262,10 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   e.preventDefault()
 
   const style = { ...props.defaultStyle };
+  // 图形宽高比
+  const proportion = style.width / style.height
+
+  // 组件中心点
   const center = {
     x: style.left + style.width / 2,
     y: style.top + style.height / 2,
@@ -285,6 +289,7 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   // 是否需要保存快照
   let needSave = false;
   let isFirst = true;
+  const needLockProportion = isNeedLockProportion();
   const move = (moveEvent: MouseEvent) => {
     // 第一次点击时也会触发 move，所以会有“刚点击组件但未移动，组件的大小却改变了”的情况发生
     // 因此第一次点击时不触发 move 事件
@@ -300,7 +305,7 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
       y: moveEvent.clientY - (editorRectInfo?.top as number),
     };
 
-    calculateComponentPositionAndSize(point, style, curPosition, {
+    calculateComponentPositionAndSize(point, style, curPosition, proportion, needLockProportion, {
       center,
       curPoint,
       symmetricPoint,
@@ -318,6 +323,18 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   document.addEventListener('mousemove', move);
   document.addEventListener('mouseup', up);
 };
+
+const isNeedLockProportion = () => {
+  if (props.element?.component != 'Group') return false
+  const ratates = [0, 90, 180, 360]
+  for (const component of props.element.propValue) {
+    if (!ratates.includes(parseInt(component.style.rotate))) {
+      return true
+    }
+  }
+
+  return false
+}
 </script>
 
 <style scoped lang="scss">

@@ -35,11 +35,17 @@ const create = () => {
     // 如果已存在 component.groupStyle，说明已经计算过一次了。不需要再次计算
     if (!Object.keys(component.groupStyle).length) {
       const style = { ...component.style };
-      style.top -= parentStyle.top;
-      style.left -= parentStyle.left;
       component.groupStyle = getStyle(style);
+      component.groupStyle.left = toPercent((style.left - parentStyle.left) / parentStyle.width);
+      component.groupStyle.top = toPercent((style.top - parentStyle.top) / parentStyle.height);
+      component.groupStyle.width = toPercent(style.width / parentStyle.width);
+      component.groupStyle.height = toPercent(style.height / parentStyle.height);
     }
   });
+};
+
+const toPercent = (val: number) => {
+  return val * 100 + '%';
 }
 
 create();

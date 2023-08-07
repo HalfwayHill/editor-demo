@@ -37,6 +37,7 @@ interface EditorState {
         components: any[],
     },
     editor: any,
+    isCut: boolean,
 }
 
 export const editorStore = defineStore('editor', () => {
@@ -66,6 +67,7 @@ export const editorStore = defineStore('editor', () => {
             components: [],
         },
         editor: null,
+        isCut: false,
     });
 
     // ref reactive 就是state
@@ -165,6 +167,9 @@ export const editorStore = defineStore('editor', () => {
             data: cloneDeep(editorState.curComponent),
             index: editorState.curComponentIndex,
         };
+
+        editorState.isCut = false
+        console.log(1)
     };
 
     /**
@@ -189,9 +194,11 @@ export const editorStore = defineStore('editor', () => {
         }
 
         copyData.id = generateID();
-        addComponent({component: copyData, index: undefined});
-        // 复制数据置空
-        editorState.copyData = null
+        addComponent({component: cloneDeep(copyData), index: undefined});
+        if (editorState.isCut) {
+            // 复制数据置空
+            editorState.copyData = null
+        }
     };
 
     /**
@@ -215,6 +222,7 @@ export const editorStore = defineStore('editor', () => {
 
         copy();
         deleteComponent();
+        editorState.isCut = true
     };
 
     const setEditMode = (mode: string) => {

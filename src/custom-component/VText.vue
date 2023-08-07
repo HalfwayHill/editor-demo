@@ -1,8 +1,8 @@
 <template>
-  <div v-if="editorStore.editorState.editMode == 'edit'" class="v-text" @keydown="stopPropagation">
+  <div v-if="editorStore.editorState.editMode == 'edit'" class="v-text" @keydown="handleKeydown" @keyup="handleKeyup">
     <!-- tabindex >= 0 使得双击时聚集该元素 -->
     <div :contenteditable="data.canEdit" :class="{ canEdit: data.canEdit }" @dblclick="setEdit" :tabindex="element?.id" @paste="clearStyleFn"
-         @mousedown="stopPropagation2" @blur="handleBlur" ref="text" v-html="element?.propValue" @input="handleInput"
+         @mousedown="handleMousedown" @blur="handleBlur" ref="text" v-html="element?.propValue" @input="handleInput"
          :style="{ verticalAlign: element?.style.verticalAlign }"
     ></div>
   </div>
@@ -32,7 +32,7 @@ const text = ref<Element>();
 const data = reactive({
   canEdit: false,
   ctrlKey: 17,
-  keys: [67, 68, 86, 88, 89, 90], // 复制 删除 撤销 重做 剪切 删除键
+  keys: [67, 68, 86, 88, 89, 90], // 复制 删除 撤销 重做 剪切 删除
   isCtrlDown: false,
 });
 
@@ -42,15 +42,21 @@ const handleInput = (e: any) => {
   emit('input:show', props.element, e.target.innerHTML)
 }
 
-const stopPropagation = (e: any) => {
+const handleKeydown = (e: any) => {
   if (e.keyCode == data.ctrlKey) {
     data.isCtrlDown = true
-  } else if (data.isCtrlDown && data.keys.includes(e.keyCode)) {
+  } else if (data.isCtrlDown && data.canEdit && data.keys.includes(e.keyCode)) {
     e.stopPropagation()
   }
 };
 
-const stopPropagation2 = (e: any) => {
+const handleKeyup = (e: any) => {
+  if (e.keyCode == data.ctrlKey) {
+    data.isCtrlDown = false
+  }
+};
+
+const handleMousedown = (e: any) => {
   if (data.canEdit) {
     e.stopPropagation()
   }
