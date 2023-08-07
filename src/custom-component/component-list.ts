@@ -73,7 +73,7 @@ const list = [
     {
         component: 'rect-shape',
         label: '矩形',
-        propValue: '',
+        propValue: '&nbsp;',
         icon: 'el-icon-edit',
         style: {
             width: 200,

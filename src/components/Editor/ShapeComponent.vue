@@ -20,6 +20,7 @@ import runAnimation from "@/utils/runAnimation";
 import store from "@/store";
 import emitter from "@/utils/mitt";
 import calculateComponentPositionAndSize from '@/utils/calculateComponentPositionAndSize';
+import {mod360} from "@/utils/translate";
 
 const editorStore = store.editorStore;
 
@@ -175,11 +176,11 @@ const getPointStyle = (point: any) => {
 
 const getCursor = () => {
   // 防止角度有负数，所以 + 360
-  const rotate = (editorStore.editorState.curComponent.style.rotate + 360) % 360;
+  const rotate = mod360(editorStore.editorState.curComponent.style.rotate) ;// 取余 360
   const result:any = {};
   let lastMatchIndex = -1; // 从上一个命中的角度的索引开始匹配下一个，降低时间复杂度
   data.pointList.forEach(point => {
-    const angle = (data.initialAngle[point] + rotate) % 360;
+    const angle = mod360(data.initialAngle[point] + rotate);
     const len = data.angleToCursor.length;
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -328,7 +329,7 @@ const isNeedLockProportion = () => {
   if (props.element?.component != 'Group') return false
   const ratates = [0, 90, 180, 360]
   for (const component of props.element.propValue) {
-    if (!ratates.includes(parseInt(component.style.rotate))) {
+    if (!ratates.includes(mod360(parseInt(component.style.rotate)))) {
       return true
     }
   }

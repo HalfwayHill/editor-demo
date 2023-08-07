@@ -4,7 +4,7 @@ import {cloneDeep} from "lodash";
 import {swap, $} from "@/utils/utils";
 import toast from "@/utils/toast";
 import generateID from '@/utils/generateID';
-import {decomposeComponent} from "@/utils/style";
+import {decomposeComponent} from "@/utils/decomposeComponent";
 import emitter from "@/utils/mitt";
 import {commonAttr, commonStyle} from "@/custom-component/component-list";
 
@@ -254,7 +254,7 @@ export const editorStore = defineStore('editor', () => {
         if (pos.rotate) editorState.curComponent.style.rotate = pos.rotate
     };
 
-    const setShapePosStyle = (data: { key: string, value: any }) => {
+    const setShapeSingleStyle = (data: { key: string, value: any }) => {
             editorState.curComponent.style[data.key] = data.value;
     };
 
@@ -404,7 +404,7 @@ export const editorStore = defineStore('editor', () => {
         addComponent,
         setCurComponent,
         setShapeStyle,
-        setShapePosStyle,
+        setShapeSingleStyle,
         undo,
         redo,
         setComponentData,

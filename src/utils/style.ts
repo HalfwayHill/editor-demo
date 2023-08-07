@@ -1,5 +1,4 @@
-import { sin, cos } from '@/utils/translate'
-import { $ } from '@/utils/utils'
+import {sin, cos} from '@/utils/translate'
 
 /**
  * 获取样式
@@ -66,27 +65,4 @@ export function getComponentRotatedStyle(style: any) {
     }
 
     return style;
-}
-
-/**
- * 分解组件
- * @param component
- * @param editorRect
- * @param parentStyle
- */
-export function decomposeComponent(component: any, editorRect: any, parentStyle: any) {
-    const componentRect = $(`#component${component.id}`).getBoundingClientRect();
-    // 获取元素的中心点坐标
-    const center = {
-        x: componentRect.left - editorRect.left + componentRect.width / 2,
-        y: componentRect.top - editorRect.top + componentRect.height / 2,
-    };
-
-    component.style.rotate = (component.style.rotate + parentStyle.rotate + 360) % 360;
-    component.style.width = parseFloat(component.groupStyle.width) / 100 * parentStyle.width;
-    component.style.height = parseFloat(component.groupStyle.height) / 100 * parentStyle.height;
-    // 计算出元素新的 top left 坐标
-    component.style.left = center.x - component.style.width / 2;
-    component.style.top = center.y - component.style.height / 2;
-    component.groupStyle = {};
 }

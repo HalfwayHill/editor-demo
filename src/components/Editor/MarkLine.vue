@@ -178,7 +178,7 @@ const showLine = (isDownward: boolean, isRightward: boolean) => {
       conditions[key as keyof typeof conditions].forEach((condition) => {
         if (!condition.isNearly) return
         // 修改当前组件位移
-        editorStore.setShapePosStyle({
+        editorStore.setShapeSingleStyle({
           key,
           value: rotate != 0? translateCurComponentShift(key, condition, curComponentStyle) : condition.dragShift,
         });

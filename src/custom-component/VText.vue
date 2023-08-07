@@ -74,7 +74,7 @@ const clearStyleFn = (e: any) => {
 
 const handleBlur = (e: any) => {
   if (props.element !== undefined) {
-    (props.element as any).propValue = e.target.innerHTML;
+    (props.element as any).propValue = e.target.innerHTML || '&nbsp;';
     data.canEdit = false;
   }
 
