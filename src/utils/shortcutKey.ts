@@ -15,6 +15,7 @@ const ctrlKey = 17,
     sKey = 83, // 保存
     pKey = 80, // 预览
     dKey = 68, // 删除
+    deleteKey = 46, // 删除
     eKey = 69 // 清空画布
 
 let isCtrlDown = false
@@ -26,7 +27,10 @@ export const keycodes = [66, 67, 68, 69, 71, 80, 83, 86, 88, 89, 90]
 export function listenGlobalKeyDown() {
     window.onkeydown = (e) => {
         const editorStore = appStore.editorStore;
-        if (e.keyCode == ctrlKey) {
+        if (e.keyCode == deleteKey && editorStore.editorState.curComponent) {
+            editorStore.deleteComponent();
+            editorStore.recordSnapshot();
+        } else if (e.keyCode == ctrlKey) {
             isCtrlDown = true
         } else if (isCtrlDown && e.keyCode == cKey) {
             editorStore.copy();

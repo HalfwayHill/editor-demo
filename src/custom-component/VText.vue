@@ -48,6 +48,8 @@ const handleKeydown = (e: any) => {
     data.isCtrlDown = true
   } else if (data.isCtrlDown && data.canEdit && keycodes.includes(e.keyCode)) {
     e.stopPropagation()
+  } else if (e.keyCode == 46) { // deleteKey
+    e.stopPropagation()
   }
 };
 
