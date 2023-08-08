@@ -28,7 +28,7 @@ interface EditorState {
     menuLeft: number;
     menuShow: boolean;
     copyData: any, // 复制粘贴剪切
-    areaData: {
+    areaData: { // 选中区域包含的组件以及区域位移信息
         style: {
             top: number,
             left: number,
@@ -59,7 +59,7 @@ export const editorStore = defineStore('editor', () => {
         menuLeft: 0,
         menuShow: false,
         copyData: null, // 复制粘贴剪切
-        areaData: {
+        areaData: { // 选中区域包含的组件以及区域位移信息
             style: {
                 top: 0,
                 left: 0,
@@ -136,6 +136,10 @@ export const editorStore = defineStore('editor', () => {
         editorState.areaData.components = [];
     };
 
+    /**
+     * 将已经放到 Group 组件数据删除，也就是在 componentData 中删除，因为它们已经放到 Group 组件中了
+     * @param deleteData
+     */
     const batchDeleteComponent =(deleteData: any[]) => {
         console.log("componentData", editorState.componentData);
         console.log("deleteData", deleteData);

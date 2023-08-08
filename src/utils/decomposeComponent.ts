@@ -3,6 +3,7 @@ import { $ } from "@/utils/utils";
 
 /**
  * 分解组件
+ * 将组合中的各个子组件拆分出来，并计算它们新的 style
  * @param component
  * @param editorRect
  * @param parentStyle

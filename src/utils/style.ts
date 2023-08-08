@@ -39,7 +39,7 @@ export function getStyle(style: any, filter: any[] = []) {
 }
 
 /**
- * 获取组件旋转样式
+ * 获取一个组件旋转 rotate 后的样式
  * @param style
  */
 export function getComponentRotatedStyle(style: any) {
