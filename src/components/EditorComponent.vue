@@ -57,6 +57,7 @@ import store from "@/store";
 import {getStyle, getComponentRotatedStyle} from '@/utils/style';
 import emitter from "@/utils/mitt";
 import {onMounted, reactive} from "vue";
+import { $ } from "@/utils/utils";
 
 defineProps({
   isEdit: {
@@ -82,9 +83,9 @@ const editorStore = store.editorStore;
 onMounted(() => {
   // 获取编辑器元素
   editorStore.getEditor();
-  const info = editorStore.editorState.editor.getBoundingClientRect()
-  data.editorX = info.x
-  data.editorY = info.y
+  const rectInfo = editorStore.editorState.editor.getBoundingClientRect()
+  data.editorX = rectInfo.x
+  data.editorY = rectInfo.y
 
   emitter.on('hideArea', () => {
     hideArea();
@@ -152,10 +153,29 @@ const createGroup = () => {
     return;
   }
 
+  // 为了求 Group 组件的 left top right bottom 边界
+  // 所以要遍历选择区域的每个组件，获取它们的 left top right bottom 信息来进行比较
   let top = Infinity, left = Infinity;
   let right = -Infinity, bottom = -Infinity;
   areaData.forEach(component => {
-    const style = getComponentRotatedStyle(component.style);
+    let style: any = {}
+    if (component.component == 'VGroup') {
+      (component.propValue as any[]).forEach(item => {
+        const rectInfo = $(`#component${item.id}`).getBoundingClientRect()
+        style.left = rectInfo.left - data.editorX
+        style.top = rectInfo.top - data.editorY
+        style.right = rectInfo.right - data.editorX
+        style.bottom = rectInfo.bottom - data.editorY
+
+        if (style.left < left) left = style.left
+        if (style.top < top) top = style.top
+        if (style.right > right) right = style.right
+        if (style.bottom > bottom) bottom = style.bottom
+      })
+    } else {
+      style = getComponentRotatedStyle(component.style)
+    }
+
     if (style.left < left) left = style.left;
     if (style.top < top) top = style.top;
     if (style.right > right) right = style.right;
