@@ -1,7 +1,7 @@
 <template>
   <div class="contextmenu" v-show="editorStore.editorState.menuShow"
        :style="{ top: editorStore.editorState.menuTop + 'px', left: editorStore.editorState.menuLeft + 'px' }">
-    <ul>
+    <ul @mouseup="handleMouseUp">
       <template v-if="editorStore.editorState.curComponent">
         <li @click="copy">复制</li>
         <li @click="paste">粘贴</li>
@@ -28,6 +28,11 @@ reactive<{
 }>({
   copyData: null
 });
+
+// 点击菜单时不取消当前组件的选中状态
+const handleMouseUp = () => {
+  editorStore.setClickComponentStatus(true);
+};
 
 const copy = () => {
   editorStore.copy();

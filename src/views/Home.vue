@@ -109,9 +109,14 @@ const handleMouseDown = () => {
   editorStore.setClickComponentStatus(false);
 };
 
-const deselectCurComponent = () => {
+const deselectCurComponent = (e: any) => {
+
   if (!editorStore.editorState.isClickComponent) {
     editorStore.setCurComponent({component: null, index: null});
+  }
+
+  // 0 左击 1 滚轮 2 右击
+  if (e.button != 2) {
     editorStore.hideContextMenu();
   }
 };

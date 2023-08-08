@@ -52,7 +52,9 @@ export const editorStore = defineStore('editor', () => {
         componentData: [],
         curComponent: null,
         curComponentIndex: null,
-        isClickComponent: false, // 点时画布时是否点中组件，主要用于取消选中组件用。如果点在空白处，则为 false。
+        // 点击画布时是否点中组件，主要用于取消选中组件用。
+        // 如果没点中组件，并且在画布空白处弹起鼠标，则取消当前组件的选中状态
+        isClickComponent: false,
         snapshotData: [], // 编辑器快照数据
         snapshotIndex: -1, // 快照索引
         menuTop: 0,
