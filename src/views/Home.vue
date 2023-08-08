@@ -46,6 +46,7 @@ import compList from '@/custom-component/component-list';
 import Toolbar from "@/components/Toolbar.vue";
 import AnimationList from "@/components/AnimationList.vue";
 import EventList from "@/components/EventList.vue";
+import {listenGlobalKeyDown} from "@/utils/shortcutKey";
 
 const editorStore = appStore.editorStore;
 
@@ -65,33 +66,6 @@ const restore = () => {
 
   if (localStorage.getItem('canvasStyle')) {
     editorStore.setCanvasStyle(JSON.parse(localStorage.getItem('canvasStyle')!));
-  }
-};
-
-/**
- * 监听复制粘贴
- */
-const listenCopyAndPaste = () => {
-  const ctrlKey = 17, vKey = 86, cKey = 67, xKey = 88;
-  let isCtrlDown = false;
-
-  window.onkeydown = (e) => {
-    if (e.keyCode == ctrlKey) {
-      isCtrlDown = true;
-    } else if (isCtrlDown && e.keyCode == cKey) {
-      editorStore.copy();
-    } else if (isCtrlDown && e.keyCode == vKey) {
-      editorStore.paste(false);
-      editorStore.recordSnapshot();
-    } else if (isCtrlDown && e.keyCode == xKey) {
-      editorStore.cut();
-    }
-  }
-
-  window.onkeyup = (e) => {
-    if (e.keyCode == ctrlKey) {
-      isCtrlDown = false;
-    }
   }
 };
 
@@ -139,7 +113,7 @@ const deselectCurComponent = () => {
 // 执行初始化
 restore();
 // 监听复制粘贴
-listenCopyAndPaste();
+listenGlobalKeyDown();
 
 </script>
 

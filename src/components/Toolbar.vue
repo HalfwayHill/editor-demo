@@ -35,6 +35,7 @@ import toast from "@/utils/toast";
 import generateID from "@/utils/generateID";
 import {ElMessage} from "element-plus";
 import { commonStyle, commonAttr } from '@/custom-component/component-list';
+import emitter from "@/utils/mitt";
 
 const editorStore = appStore.editorStore;
 
@@ -100,7 +101,7 @@ const handleFileChange = (e: any) => {
 
 const previewClick = () => {
   data.isShowPreview = true;
-  editorStore.setEditMode('read');
+  editorStore.setEditMode('preview');
 };
 
 const handlePreviewChange = () => {
@@ -121,7 +122,12 @@ const save = () => {
  */
 const clearCanvas = () => {
   editorStore.setComponentData([]);
+  editorStore.recordSnapshot();
 };
+
+emitter.on('preview', previewClick);
+emitter.on('save', save);
+emitter.on('clearCanvas', clearCanvas);
 </script>
 
 <style scoped lang="scss">

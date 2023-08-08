@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import appStore from "@/store";
 import {reactive, ref} from "vue";
+import {keycodes} from "@/utils/shortcutKey";
 
 const editorStore = appStore.editorStore;
 
@@ -45,7 +46,7 @@ const handleInput = (e: any) => {
 const handleKeydown = (e: any) => {
   if (e.keyCode == data.ctrlKey) {
     data.isCtrlDown = true
-  } else if (data.isCtrlDown && data.canEdit && data.keys.includes(e.keyCode)) {
+  } else if (data.isCtrlDown && data.canEdit && keycodes.includes(e.keyCode)) {
     e.stopPropagation()
   }
 };

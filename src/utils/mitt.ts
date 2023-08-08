@@ -6,6 +6,9 @@ type Events = {
     unMove: any;
     runAnimation: any;
     hideArea: any;
+    save: any;
+    preview: any;
+    clearCanvas: any;
 };
 
 const emitter = mitt<Events>()

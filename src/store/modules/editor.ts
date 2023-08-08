@@ -16,7 +16,7 @@ interface CanvasStyleData{
 }
 
 interface EditorState {
-    editMode: string; // 编辑器模式 edit read
+    editMode: string; // 编辑器模式 edit preview
     canvasStyleData: CanvasStyleData; // 页面全局数据
     componentData: Array<any>;  // 画布组件数据
     curComponent: any;
@@ -163,13 +163,13 @@ export const editorStore = defineStore('editor', () => {
      * 复制
      */
     const copy = () => {
+        if (!editorState.curComponent) return
         editorState.copyData = {
             data: cloneDeep(editorState.curComponent),
             index: editorState.curComponentIndex,
         };
 
-        editorState.isCut = false
-        console.log(1)
+        editorState.isCut = false;
     };
 
     /**
@@ -213,8 +213,11 @@ export const editorStore = defineStore('editor', () => {
         // 当前是否有复制数据
         // todo：若有复制数据，是否应该直接弃用
         if (editorState.copyData) {
-            addComponent({ component: editorState.copyData.data, index: editorState.copyData.index });
-            if (editorState.curComponentIndex >= editorState.copyData.index) {
+            const data = cloneDeep(editorState.copyData.data);
+            const index = editorState.copyData.index;
+            data.id = generateID();
+            addComponent({ component: data, index: index });
+            if (editorState.curComponentIndex >= index) {
                 // 如果当前组件索引大于等于插入索引，需要加一，因为当前组件往后移了一位
                 editorState.curComponentIndex++;
             }
