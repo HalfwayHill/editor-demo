@@ -94,6 +94,7 @@ onMounted(() => {
  * @param e
  */
 const handleRotate = (e: any) => {
+  editorStore.setClickComponentStatus(true);
   e.preventDefault();
   e.stopPropagation();
   // 初始坐标和初始角度
@@ -202,6 +203,7 @@ const getCursor = () => {
 }
 
 const handleMouseDownOnShape = (e: any) => {
+  editorStore.setClickComponentStatus(true);
   if (props.element?.component != 'v-text' && props.element?.component != 'rect-shape') {
     e.preventDefault();
   }
@@ -259,12 +261,13 @@ const selectCurComponent = (e: any) => {
 };
 
 const handleMouseDownOnPoint = (point: any, e: any) => {
-  e.stopPropagation()
-  e.preventDefault()
+  editorStore.setClickComponentStatus(true);
+  e.stopPropagation();
+  e.preventDefault();
 
   const style = { ...props.defaultStyle };
   // 图形宽高比
-  const proportion = style.width / style.height
+  const proportion = style.width / style.height;
 
   // 组件中心点
   const center = {

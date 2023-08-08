@@ -9,7 +9,7 @@
       </section>
       <!-- 中间画布 -->
       <section class="center">
-        <div class="content" @drop="handleDrop" @dragover="handleDragOver" @click="deselectCurComponent">
+        <div class="content" @drop="handleDrop" @dragover="handleDragOver" @mousedown="handleMouseDown" @mouseup="deselectCurComponent">
           <Editor/>
         </div>
       </section>
@@ -105,9 +105,15 @@ const handleDragOver = (e: any) => {
   e.dataTransfer.dropEffect = 'copy';
 };
 
+const handleMouseDown = () => {
+  editorStore.setClickComponentStatus(false);
+};
+
 const deselectCurComponent = () => {
-  editorStore.setCurComponent({component: null, index: null});
-  editorStore.hideContextMenu();
+  if (!editorStore.editorState.isClickComponent) {
+    editorStore.setCurComponent({component: null, index: null});
+    editorStore.hideContextMenu();
+  }
 };
 
 // 执行初始化

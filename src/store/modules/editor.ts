@@ -21,6 +21,7 @@ interface EditorState {
     componentData: Array<any>;  // 画布组件数据
     curComponent: any;
     curComponentIndex: any;
+    isClickComponent: boolean, // 点时画布时是否点中组件，主要用于取消选中组件用。如果点在空白处，则为 false。
     snapshotData: Array<any>; // 编辑器快照数据
     snapshotIndex: number; // 快照索引
     menuTop: number; // 右击菜单数据
@@ -51,6 +52,7 @@ export const editorStore = defineStore('editor', () => {
         componentData: [],
         curComponent: null,
         curComponentIndex: null,
+        isClickComponent: false, // 点时画布时是否点中组件，主要用于取消选中组件用。如果点在空白处，则为 false。
         snapshotData: [], // 编辑器快照数据
         snapshotIndex: -1, // 快照索引
         menuTop: 0,
@@ -228,6 +230,10 @@ export const editorStore = defineStore('editor', () => {
         editorState.isCut = true
     };
 
+    const setClickComponentStatus = (status: boolean) => {
+        editorState.isClickComponent = status
+    };
+
     const setEditMode = (mode: string) => {
         editorState.editMode = mode;
     };
@@ -402,6 +408,7 @@ export const editorStore = defineStore('editor', () => {
         copy,
         paste,
         cut,
+        setClickComponentStatus,
         setEditMode,
         setCanvasStyle,
         addComponent,
