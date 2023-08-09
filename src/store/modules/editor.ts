@@ -211,7 +211,6 @@ export const editorStore = defineStore('editor', () => {
 
     /**
      * 剪切
-     * @param copyData
      */
     const cut = () => {
         if (editorState.curComponent) {
