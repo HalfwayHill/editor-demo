@@ -1,11 +1,11 @@
 <template>
-  <div ref="thisRef" class="shape" :class="{ active: active }" @click="selectCurComponent" @mousedown="handleMouseDownOnShape">
-    <el-icon class="el-icon-refresh-right" v-show="active" @mousedown="handleRotate">
+  <div ref="thisRef" class="shape" :class="{ active }" @click="selectCurComponent" @mousedown="handleMouseDownOnShape">
+    <el-icon class="el-icon-refresh-right" v-show="isActive()" @mousedown="handleRotate">
       <RefreshRight />
     </el-icon>
     <div
         class="shape-point"
-        v-for="item in (active? data.pointList : [])"
+        v-for="item in (isActive()? data.pointList : [])"
         @mousedown="handleMouseDownOnPoint(item, $event)"
         :key="item"
         :style="getPointStyle(item)">
@@ -88,6 +88,13 @@ onMounted(() => {
     }
   })
 });
+
+/**
+ * 是否可用
+ */
+const isActive = (): boolean => {
+  return props.active && !props.element?.isLock
+};
 
 /**
  * 处理旋转
@@ -210,6 +217,9 @@ const handleMouseDownOnShape = (e: any) => {
 
   e.stopPropagation();
   editorStore.setCurComponent({ component: props.element, index: props.index as number });
+
+  if (props.element?.isLock) return
+
   data.cursors = getCursor(); // 根据旋转角度获取光标位置
 
   const pos = { ...props.defaultStyle };
@@ -371,7 +381,7 @@ const isNeedLockProportion = () => {
   font-weight: 600;
   cursor: grab;
   color: #59c7f9;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: normal;
 
   &:active {

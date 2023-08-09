@@ -27,7 +27,8 @@ export const keycodes = [66, 67, 68, 69, 71, 80, 83, 86, 88, 89, 90]
 export function listenGlobalKeyDown() {
     window.onkeydown = (e) => {
         const editorStore = appStore.editorStore;
-        if (e.keyCode == deleteKey && editorStore.editorState.curComponent) {
+        const { areaData, curComponent } = editorStore.editorState;
+        if (e.keyCode == deleteKey && curComponent) {
             editorStore.deleteComponent();
             editorStore.recordSnapshot();
         } else if (e.keyCode == ctrlKey) {
@@ -44,11 +45,11 @@ export function listenGlobalKeyDown() {
             e.preventDefault();
         } else if (isCtrlDown && e.keyCode == zKey) {
             editorStore.undo();
-        } else if (isCtrlDown && e.keyCode == gKey && editorStore.editorState.areaData.components.length) {
+        } else if (isCtrlDown && e.keyCode == gKey && areaData.components.length) {
             editorStore.compose();
             editorStore.recordSnapshot();
             e.preventDefault()
-        } else if (isCtrlDown && e.keyCode == bKey && editorStore.editorState.curComponent && editorStore.editorState.curComponent.component == 'VGroup') {
+        } else if (isCtrlDown && e.keyCode == bKey && curComponent &&!curComponent.isLock &&  curComponent.component == 'VGroup') {
             editorStore.decompose();
             editorStore.recordSnapshot();
             e.preventDefault()
@@ -58,7 +59,7 @@ export function listenGlobalKeyDown() {
         } else if (isCtrlDown && e.keyCode == pKey) {
             emitter.emit('preview');
             e.preventDefault();
-        } else if (isCtrlDown && e.keyCode == dKey) {
+        } else if (isCtrlDown && e.keyCode == dKey && curComponent) {
             editorStore.deleteComponent();
             editorStore.recordSnapshot();
             e.preventDefault();

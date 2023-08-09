@@ -403,6 +403,20 @@ export const editorStore = defineStore('editor', () => {
         delete editorState.curComponent.events[event]
     };
 
+    /**
+     * 组件锁定
+     */
+    const lock = () => {
+        editorState.curComponent.isLock = true
+    };
+
+    /**
+     * 组件不锁定
+     */
+    const unlock = () => {
+        editorState.curComponent.isLock = false
+    };
+
     return {
         editorState,
         getCurComponent,
@@ -435,6 +449,8 @@ export const editorStore = defineStore('editor', () => {
         addAnimation,
         removeAnimation,
         addEvent,
-        removeEvent
+        removeEvent,
+        lock,
+        unlock
     }
 })

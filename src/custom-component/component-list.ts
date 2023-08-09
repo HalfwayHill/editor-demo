@@ -1,15 +1,21 @@
 import defaultImg from '@/assets/title.jpg';
 
-// 公共样式
+/**
+ * 公共样式
+ */
 export const commonStyle = {
     rotate: 0,
     opacity: 1,
 }
 
+/**
+ * 通用属性
+ */
 export const commonAttr = {
     animations: [],
     events: {},
     groupStyle: {}, // 当一个组件成为 Group 的子组件时使用
+    isLock: false, // 是否锁定组件
 }
 
 // 编辑器左侧组件列表

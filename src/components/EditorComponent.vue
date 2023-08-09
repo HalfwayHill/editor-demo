@@ -17,6 +17,7 @@
            :active="item === editorStore.editorState.curComponent"
            :element="item"
            :index="index"
+           :class="{ lock: item.isLock }"
     >
       <component
           v-if="item.component != 'v-text'"
@@ -203,6 +204,7 @@ const getSelectArea = () => {
   const result: any[] = [];
   const {x, y} = data.start;
   editorStore.editorState.componentData.forEach(component => {
+    if (component.isLock) return
     const {left, top, width, height} = component.style;
     if (x <= left && y <= top && (left + width <= x + data.width) && (top + height <= y + data.height)) {
       result.push(component);
@@ -271,6 +273,10 @@ const getTextareaHeight = (element: any, text: any) => {
   position: relative;
   background: #fff;
   margin: auto;
+
+  .lock {
+    opacity: .5;
+  }
 }
 
 .edit {
