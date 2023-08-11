@@ -99,7 +99,7 @@ const handleMouseDown = (e: any) => {
   }
   hideArea();
 
-  // 获取编辑器的唯一信息
+  // 获取编辑器的位移信息，每次点击时都需要获取一次。主要是为了方便开发时调试用。
   const rectInfo = editorStore.editorState.editor.getBoundingClientRect();
   data.editorX = rectInfo.x;
   data.editorY = rectInfo.y;
@@ -108,6 +108,7 @@ const handleMouseDown = (e: any) => {
   const startY = e.clientY;
   data.start.x = startX - data.editorX;
   data.start.y = startY - data.editorY;
+  // 展示选中区域
   data.isShowArea = true;
 
   const move = (moveEvent: any) => {
@@ -151,7 +152,7 @@ const hideArea = () => {
  * 创造组合元素
  */
 const createGroup = () => {
-  // 获取选中区域的组件
+  // 获取选中区域的组件数据
   const areaData = getSelectArea();
   if (areaData.length <= 1) {
     hideArea();
@@ -192,6 +193,7 @@ const createGroup = () => {
   data.width = right - left;
   data.height = bottom - top;
 
+  // 设置选中区域位移大小信息和区域内的组件数据
   editorStore.setAreaData({
     style: {
       left,
@@ -205,7 +207,9 @@ const createGroup = () => {
 
 const getSelectArea = () => {
   const result: any[] = [];
+  // 区域起点坐标
   const {x, y} = data.start;
+  // 计算所有的组件数据，判断是否在选中区域内
   editorStore.editorState.componentData.forEach(component => {
     if (component.isLock) return
     const {left, top, width, height} = component.style;
@@ -214,6 +218,7 @@ const getSelectArea = () => {
     }
   })
 
+  // 返回在选中区域内的所有组件
   return result;
 };
 

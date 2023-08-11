@@ -143,7 +143,11 @@ const handleRotate = (e: any) => {
   document.addEventListener('mouseup', up)
 };
 
-const getPointStyle = (point: any) => {
+/**
+ * 获取伸缩角点的样式
+ * @param point 各个点
+ */
+const getPointStyle = (point: string) => {
   const height = props.defaultStyle?.height
   const width = props.defaultStyle?.width
   const hasT = /t/.test(point)
@@ -276,7 +280,7 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   e.preventDefault();
 
   const style = { ...props.defaultStyle };
-  // 图形宽高比
+  // 组件宽高比
   const proportion = style.width / style.height;
 
   // 组件中心点
