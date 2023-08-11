@@ -32,8 +32,8 @@ const text = ref<Element>();
 
 const data = reactive({
   canEdit: false,
-  ctrlKey: 17,
-  keys: [67, 68, 86, 88, 89, 90], // 复制 删除 撤销 重做 剪切 删除
+  ctrlKey: 'Control',
+  deleteKey: 'Delete',
   isCtrlDown: false,
 });
 
@@ -44,17 +44,17 @@ const handleInput = (e: any) => {
 }
 
 const handleKeydown = (e: any) => {
-  if (e.keyCode == data.ctrlKey) {
-    data.isCtrlDown = true
-  } else if (data.isCtrlDown && data.canEdit && keycodes.includes(e.keyCode)) {
-    e.stopPropagation()
-  } else if (e.keyCode == 46) { // deleteKey
-    e.stopPropagation()
+  if (e.key === data.ctrlKey) {
+    data.isCtrlDown = true;
+  } else if (data.isCtrlDown && data.canEdit && keycodes.includes(e.key)) {
+    e.stopPropagation();
+  } else if (e.key === data.deleteKey) {
+    e.stopPropagation();
   }
 };
 
 const handleKeyup = (e: any) => {
-  if (e.keyCode == data.ctrlKey) {
+  if (e.key === data.ctrlKey) {
     data.isCtrlDown = false
   }
 };
