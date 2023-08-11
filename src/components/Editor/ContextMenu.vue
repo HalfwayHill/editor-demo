@@ -3,14 +3,18 @@
        :style="{ top: editorStore.editorState.menuTop + 'px', left: editorStore.editorState.menuLeft + 'px' }">
     <ul @mouseup="handleMouseUp">
       <template v-if="editorStore.editorState.curComponent">
-        <li @click="copy">复制</li>
-        <li @click="paste">粘贴</li>
-        <li @click="cut">剪切</li>
-        <li @click="deleteComponent">删除</li>
-        <li @click="topComponent">置顶</li>
-        <li @click="bottomComponent">置底</li>
-        <li @click="upComponent">上移</li>
-        <li @click="downComponent">下移</li>
+        <template v-if="!editorStore.editorState.curComponent.isLock">
+          <li @click="copy">复制</li>
+          <li @click="paste">粘贴</li>
+          <li @click="cut">剪切</li>
+          <li @click="deleteComponent">删除</li>
+          <li @click="lock">锁定</li>
+          <li @click="topComponent">置顶</li>
+          <li @click="bottomComponent">置底</li>
+          <li @click="upComponent">上移</li>
+          <li @click="downComponent">下移</li>
+        </template>
+        <li v-else @click="unlock">解锁</li>
       </template>
       <li v-else @click="paste">粘贴</li>
     </ul>
@@ -29,9 +33,19 @@ reactive<{
   copyData: null
 });
 
-// 点击菜单时不取消当前组件的选中状态
+/**
+ * 点击菜单时不取消当前组件的选中状态
+ */
 const handleMouseUp = () => {
   editorStore.setClickComponentStatus(true);
+};
+
+const lock = () => {
+  editorStore.lock();
+};
+
+const unlock = () => {
+  editorStore.unlock();
 };
 
 const copy = () => {

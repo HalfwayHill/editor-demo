@@ -84,9 +84,7 @@ const editorStore = store.editorStore;
 onMounted(() => {
   // 获取编辑器元素
   editorStore.getEditor();
-  const rectInfo = editorStore.editorState.editor.getBoundingClientRect()
-  data.editorX = rectInfo.x
-  data.editorY = rectInfo.y
+
 
   emitter.on('hideArea', () => {
     hideArea();
@@ -100,6 +98,11 @@ const handleMouseDown = (e: any) => {
     e.preventDefault();
   }
   hideArea();
+
+  // 获取编辑器的唯一信息
+  const rectInfo = editorStore.editorState.editor.getBoundingClientRect();
+  data.editorX = rectInfo.x;
+  data.editorY = rectInfo.y;
 
   const startX = e.clientX;
   const startY = e.clientY;
@@ -226,6 +229,9 @@ const handleContextMenu = (e: any) => {
   let target = e.target;
   let top = e.offsetY;
   let left = e.offsetX;
+  while (target instanceof SVGElement) {
+    target = target.parentNode;
+  }
   while (!target.className.includes('editor')) {
     left += target.offsetLeft;
     top += target.offsetTop;

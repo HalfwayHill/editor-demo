@@ -12,28 +12,49 @@ const ctrlKey = 'Control',
     gKey = 'g', // 组合
     bKey = 'b', // 拆分
 
+    lKey = 'l', // 锁定
+    uKey = 'u', // 解锁
+
     sKey = 's', // 保存
     pKey = 'p', // 预览
     dKey = 'd', // 删除
     deleteKey = 'Delete', // 删除
     eKey = 'e' // 清空画布
-export const keycodes = ['b', 'c', 'd', 'e', 'g', 'p', 's', 'v', 'x', 'y', 'z'];
+export const keycodes = ['b', 'c', 'd', 'e', 'g', 'l', 'p', 's', 'u', 'v', 'x', 'y', 'z'];
 
-const keyMap = {
-    [vKey]: paste,
-    [cKey]: copy,
-    [xKey]: cut,
+/**
+ * 与组件状态无关的操作
+ */
+const baseMap = {
     [vKey]: paste,
     [yKey]: redo,
     [zKey]: undo,
-    [gKey]: compose,
-    [bKey]: decompose,
     [sKey]: save,
     [pKey]: preview,
-    [dKey]: deleteComponent,
-    [deleteKey]: deleteComponent,
     [eKey]: clearCanvas,
 };
+
+/**
+ * 组件锁定状态下可以执行的操作
+ */
+const lockMap = {
+    ...baseMap,
+    [uKey]: unlock,
+}
+
+/**
+ * 组件未锁定状态下可以执行的操作
+ */
+const unlockMap = {
+    ...baseMap,
+    [cKey]: copy,
+    [xKey]: cut,
+    [gKey]: compose,
+    [bKey]: decompose,
+    [dKey]: deleteComponent,
+    [deleteKey]: deleteComponent,
+    [lKey]: lock,
+}
 
 let isCtrlDown = false;
 
@@ -42,14 +63,20 @@ let isCtrlDown = false;
  */
 export function listenGlobalKeyDown() {
     window.onkeydown = (e) => {
-        const store = appStore.editorStore;
+        const { curComponent } = appStore.editorStore.editorState;
         if (e.key === ctrlKey) {
             isCtrlDown = true
-        } else if (e.key === deleteKey && store.editorState.curComponent) {
-            store.deleteComponent();
-            store.recordSnapshot();
-        }else if (isCtrlDown) {
-            keyMap[e.key as keyof typeof keyMap](e);
+        } else if (e.key === deleteKey && curComponent) {
+            appStore.editorStore.deleteComponent();
+            appStore.editorStore.recordSnapshot();
+        } else if (isCtrlDown) {
+            if (!curComponent || !curComponent.isLock) {
+                e.preventDefault();
+                unlockMap[e.key as keyof typeof unlockMap] && unlockMap[e.key as keyof typeof unlockMap]();
+            } else if (curComponent && curComponent.isLock) {
+                e.preventDefault();
+                lockMap[e.key as keyof typeof lockMap] && lockMap[e.key as keyof typeof lockMap]()
+            }
         }
     }
 
@@ -73,51 +100,52 @@ function cut() {
     appStore.editorStore.cut();
 }
 
-function redo(e: any) {
+function redo() {
     appStore.editorStore.redo();
-    e.preventDefault();
 }
 
 function undo() {
     appStore.editorStore.undo();
 }
 
-function compose(e: any) {
+function compose() {
     if (appStore.editorStore.editorState.areaData.components.length) {
         appStore.editorStore.compose();
         appStore.editorStore.recordSnapshot();
-        e.preventDefault();
     }
 }
 
-function decompose(e: any) {
+function decompose() {
     const curComponent = appStore.editorStore.editorState.curComponent
     if (curComponent && !curComponent.isLock && curComponent.component == 'VGroup') {
         appStore.editorStore.decompose();
         appStore.editorStore.recordSnapshot();
-        e.preventDefault();
     }
 }
 
-function save(e: any) {
+function save() {
     emitter.emit('save');
-    e.preventDefault();
 }
 
-function preview(e: any) {
+function preview() {
     emitter.emit('preview');
-    e.preventDefault();
 }
 
-function deleteComponent(e: any) {
+function deleteComponent() {
     if (appStore.editorStore.editorState.curComponent) {
         appStore.editorStore.deleteComponent();
         appStore.editorStore.recordSnapshot();
-        e.preventDefault();
     }
 }
 
-function clearCanvas(e: any) {
+function clearCanvas() {
     emitter.emit('clearCanvas');
-    e.preventDefault();
+}
+
+function lock() {
+    appStore.editorStore.lock();
+}
+
+function unlock() {
+    appStore.editorStore.unlock();
 }
