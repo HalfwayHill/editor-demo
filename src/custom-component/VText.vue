@@ -6,7 +6,7 @@
          :style="{ verticalAlign: element?.style.verticalAlign }"
     ></div>
   </div>
-  <div v-else class="v-text">
+  <div v-else class="v-text preview">
     <div v-html="element?.propValue" :style="{ verticalAlign: element?.style.verticalAlign }"></div>
   </div>
 </template>
@@ -118,5 +118,9 @@ const selectText = (element: any) => {
     cursor: text;
     height: 100%;
   }
+}
+
+.preview {
+  user-select: none;
 }
 </style>
