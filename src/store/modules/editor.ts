@@ -319,6 +319,15 @@ export const editorStore = defineStore('editor', () => {
      * 删除当前组件实例
      */
     const deleteComponent = (index = editorState.curComponentIndex) => {
+        if (index === undefined) {
+            index = editorState.curComponentIndex
+        }
+
+        if (index == editorState.curComponentIndex) {
+            editorState.curComponentIndex = null
+            editorState.curComponent = null
+        }
+
         editorState.componentData.splice(index, 1);
     };
 
