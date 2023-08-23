@@ -292,10 +292,14 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
   // 获取画布位移信息
   const editorRectInfo = editorStore.editorState.editor.getBoundingClientRect();
 
+  //获取 point 与实际拖动基准点的差值
+
+  const pointDistance = getPointDistance(editorRectInfo, e);
+
   // 当前点击坐标
   const curPoint = {
-    x: e.clientX - (editorRectInfo?.left as number),
-    y: e.clientY - (editorRectInfo?.top as number),
+    x: e.clientX - editorRectInfo.left + pointDistance.x,
+    y: e.clientY - editorRectInfo.top + pointDistance.y,
   };
 
   // 获取对称点的坐标
@@ -319,8 +323,8 @@ const handleMouseDownOnPoint = (point: any, e: any) => {
     needSave = true;
 
     const curPosition = {
-      x: moveEvent.clientX - (editorRectInfo?.left as number),
-      y: moveEvent.clientY - (editorRectInfo?.top as number),
+      x: moveEvent.clientX - editorRectInfo.left + pointDistance.x,
+      y: moveEvent.clientY - editorRectInfo.top + pointDistance.y,
     };
 
     calculateComponentPositionAndSize(point, style, curPosition, proportion, needLockProportion, {
@@ -352,6 +356,25 @@ const isNeedLockProportion = () => {
   }
 
   return false
+}
+
+const getPointDistance = (editorRectInfo: any, e: any) => {
+  const fakePos = {
+    x: e.clientX - editorRectInfo.left,
+    y: e.clientY - editorRectInfo.top,
+  };
+  const pointRect = e.target.getBoundingClientRect();
+
+  const relPos = {
+    x: pointRect.left - editorRectInfo.left + e.target.offsetWidth / 2,
+    y: pointRect.top - editorRectInfo.top + e.target.offsetHeight / 2,
+  };
+  const pointDistance = {
+    x: relPos.x - fakePos.x,
+    y: relPos.y - fakePos.y,
+  };
+
+  return pointDistance;
 }
 </script>
 
