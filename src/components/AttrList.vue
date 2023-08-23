@@ -5,13 +5,31 @@
         <el-color-picker v-if="key == 'borderColor'" v-model="curComponent.style[key]"></el-color-picker>
         <el-color-picker v-else-if="key == 'color'" v-model="curComponent.style[key]"></el-color-picker>
         <el-color-picker v-else-if="key == 'backgroundColor'" v-model="curComponent.style[key]"></el-color-picker>
-        <el-select v-else-if="key == 'textAlign'" v-model="curComponent.style[key]">
-          <el-option
-              v-for="item in attribute.options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-          ></el-option>
+        <el-select v-else-if="attribute.selectKey.includes(key)" v-model="curComponent.style[key]">
+          <template v-if="key == 'textAlign'">
+            <el-option
+                v-for="item in attribute.textAlignOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            ></el-option>
+          </template>
+          <template v-else-if="key == 'borderStyle'">
+            <el-option
+                v-for="item in attribute.borderStyleOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            ></el-option>
+          </template>
+          <template v-else>
+            <el-option
+                v-for="item in attribute.verticalAlignOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            ></el-option>
+          </template>
         </el-select>
         <el-input type="number" v-else v-model="curComponent.style[key]" />
       </el-form-item>
@@ -29,8 +47,8 @@ import store from "@/store";
 const editorStore = store.editorStore;
 
 const attribute = reactive({
-  excludes: ['VPicture', 'VGroup'], // 这些组件不显示内容
-  options: [
+  excludes: ['Picture', 'Group'], // 这些组件不显示内容
+  textAlignOptions: [
     {
       label: '左对齐',
       value: 'left',
@@ -44,6 +62,31 @@ const attribute = reactive({
       value: 'right',
     },
   ],
+  borderStyleOptions: [
+    {
+      label: '实线',
+      value: 'solid',
+    },
+    {
+      label: '虚线',
+      value: 'dashed',
+    },
+  ],
+  verticalAlignOptions: [
+    {
+      label: '上对齐',
+      value: 'top',
+    },
+    {
+      label: '居中对齐',
+      value: 'middle',
+    },
+    {
+      label: '下对齐',
+      value: 'bottom',
+    },
+  ],
+  selectKey: ['textAlign', 'borderStyle', 'verticalAlign'],
   map: {
     left: 'x 坐标',
     top: 'y 坐标',
@@ -51,6 +94,7 @@ const attribute = reactive({
     width: '宽',
     color: '颜色',
     backgroundColor: '背景色',
+    borderStyle: '边框风格',
     borderWidth: '边框宽度',
     borderColor: '边框颜色',
     borderRadius: '边框半径',
@@ -58,8 +102,9 @@ const attribute = reactive({
     fontWeight: '字体粗细',
     lineHeight: '行高',
     letterSpacing: '字间距',
-    textAlign: '对齐方式',
     opacity: '透明度',
+    textAlign: '左右对齐',
+    verticalAlign: '上下对齐',
   },
 });
 
