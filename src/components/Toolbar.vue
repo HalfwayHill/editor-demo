@@ -43,7 +43,12 @@ import {cloneDeep} from "lodash";
 
 const editorStore = appStore.editorStore;
 
-const data = reactive({
+const data = reactive<{
+  isShowPreview: boolean;
+  needToChange: string[];
+  scale: number;
+  timer: any;
+}>({
   isShowPreview: false,
   needToChange: [
     'top',
@@ -54,7 +59,7 @@ const data = reactive({
     'borderWidth',
   ],
   scale: 100,
-  timer: undefined,
+  timer: null,
 });
 
 const format = (value: number) => {
@@ -68,8 +73,11 @@ const getOriginStyle = (value:number): number => {
 };
 
 const handleScaleChange = () => {
-  clearTimeout(data.timer)
-  setTimeout(() => {
+  clearTimeout(data.timer);
+  // 画布比例设一个最小值，不能为 0
+  // eslint-disable-next-line no-bitwise
+  data.scale = (~~data.scale) || 1;
+  data.timer = setTimeout(() => {
     const componentData = cloneDeep(editorStore.editorState.componentData)
     componentData.forEach(component => {
       Object.keys(component.style).forEach(key => {
