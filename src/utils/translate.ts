@@ -1,5 +1,9 @@
-// 角度转弧度
-// Math.PI = 180 度
+import appStore from "@/store";
+
+/**
+ * 角度转弧度
+ * @param angle
+ */
 function angleToRadian(angle: number) {
     return angle * Math.PI / 180
 }
@@ -118,4 +122,13 @@ export function cos(rotate: number) {
 
 export function mod360(deg: number) {
     return (deg + 360) % 360
+}
+
+/**
+ * 改变画布比例
+ * @param value
+ */
+export function changeStyleWithScale(value:number) {
+    const store = appStore.editorStore;
+    return value * store.editorState.canvasStyleData.scale / 100;
 }

@@ -21,7 +21,7 @@
       </div>
       <div class="canvas-config">
         <span>画布比例</span>
-        <input v-model="editorStore.editorState.canvasStyleData.scale"> %
+        <input v-model="data.scale" @input="handleScaleChange"> %
       </div>
     </div>
 
@@ -39,12 +39,55 @@ import generateID from "@/utils/generateID";
 import {ElMessage} from "element-plus";
 import { commonStyle, commonAttr } from '@/custom-component/component-list';
 import emitter from "@/utils/mitt";
+import {cloneDeep} from "lodash";
 
 const editorStore = appStore.editorStore;
 
 const data = reactive({
   isShowPreview: false,
+  needToChange: [
+    'top',
+    'left',
+    'width',
+    'height',
+    'fontSize',
+    'borderWidth',
+  ],
+  scale: 100,
+  timer: undefined,
 });
+
+const format = (value: number) => {
+  return value * data.scale / 100;
+};
+
+const getOriginStyle = (value:number): number => {
+  const scale = editorStore.editorState.canvasStyleData.scale;
+  const result = value / (scale / 100);
+  return result;
+};
+
+const handleScaleChange = () => {
+  clearTimeout(data.timer)
+  setTimeout(() => {
+    const componentData = cloneDeep(editorStore.editorState.componentData)
+    componentData.forEach(component => {
+      Object.keys(component.style).forEach(key => {
+        if (data.needToChange.includes(key)) {
+          // 根据原来的比例获取样式原来的尺寸
+          // 再用原来的尺寸 * 现在的比例得出新的尺寸
+          component.style[key] = format(getOriginStyle(component.style[key]))
+        }
+      })
+    })
+
+    editorStore.setComponentData(componentData);
+    editorStore.setCanvasStyle({
+      ...editorStore.editorState.canvasStyleData,
+      scale: data.scale,
+    })
+  }, 500)
+};
 
 const lock = () => {
   editorStore.lock();
@@ -139,6 +182,8 @@ const clearCanvas = () => {
 emitter.on('preview', previewClick);
 emitter.on('save', save);
 emitter.on('clearCanvas', clearCanvas);
+
+data.scale = editorStore.editorState.canvasStyleData.scale;
 </script>
 
 <style scoped lang="scss">

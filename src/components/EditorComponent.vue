@@ -2,9 +2,8 @@
   <div class="editor" id="editor"
        :class="{ edit: isEdit }"
        :style="{
-          width: editorStore.editorState.canvasStyleData.width + 'px',
-          height: editorStore.editorState.canvasStyleData.height + 'px',
-          transform: 'scale(' + editorStore.editorState.canvasStyleData.scale / 100 + ')'
+          width: changeStyleWithScale(editorStore.editorState.canvasStyleData.width) + 'px',
+          height: changeStyleWithScale(editorStore.editorState.canvasStyleData.height) + 'px',
       }"
        @contextmenu="handleContextMenu"
        @mousedown="handleMouseDown"
@@ -59,6 +58,7 @@ import {getStyle, getComponentRotatedStyle} from '@/utils/style';
 import emitter from "@/utils/mitt";
 import {onMounted, reactive} from "vue";
 import { $ } from "@/utils/utils";
+import { changeStyleWithScale } from '@/utils/translate';
 
 defineProps({
   isEdit: {

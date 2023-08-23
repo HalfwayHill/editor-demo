@@ -5,9 +5,8 @@
       <div class="canvas"
            :style="
            {
-             width: state.canvasStyleData.width + 'px',
-             height: state.canvasStyleData.height + 'px',
-             transform: 'scale(' + state.canvasStyleData.scale / 100 + ')'
+             width: changeStyleWithScale(state.canvasStyleData.width) + 'px',
+             height: changeStyleWithScale(state.canvasStyleData.height) + 'px',
            }">
         <ComponentWrapper
             v-for="(item, index) in state.componentData"
@@ -22,6 +21,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import ComponentWrapper from "@/components/Editor/ComponentWrapper.vue";
+import { changeStyleWithScale } from '@/utils/translate';
 
 const state = store.editorStore.editorState;
 
