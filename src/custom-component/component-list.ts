@@ -50,7 +50,7 @@ const list = [
             left:0,
             width: 100,
             height: 34,
-            borderWidth: '',
+            borderWidth: 1,
             borderColor: '',
             borderRadius: '',
             fontSize: 14,
