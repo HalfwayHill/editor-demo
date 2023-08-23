@@ -1,6 +1,7 @@
 import * as VueRouter from "vue-router";
+import {RouteRecordRaw} from "vue-router";
 
-const routes = [
+const rootRoutes: Array<RouteRecordRaw> = [
     {
         path: "/",
         name: "Home",
@@ -10,7 +11,7 @@ const routes = [
 
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
-    routes,
+    routes: rootRoutes,
 })
 
 export default router;
