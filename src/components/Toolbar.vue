@@ -190,6 +190,7 @@ const save = () => {
  * 清空画布
  */
 const clearCanvas = () => {
+  editorStore.setCurComponent({ component: null, index: null });
   editorStore.setComponentData([]);
   editorStore.recordSnapshot();
 };
