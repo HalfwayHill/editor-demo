@@ -202,6 +202,11 @@ export const editorStore = defineStore('editor', () => {
         }
 
         copyData.id = generateID();
+        if (copyData.component === 'Group') {
+            (copyData.propValue as any[]).forEach(component => {
+                component.id = generateID();
+            })
+        }
         addComponent({component: cloneDeep(copyData), index: undefined});
         if (editorState.isCut) {
             // 复制数据置空
