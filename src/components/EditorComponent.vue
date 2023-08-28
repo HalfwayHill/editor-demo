@@ -212,7 +212,7 @@ const getSelectArea = () => {
   // 计算所有的组件数据，判断是否在选中区域内
   editorStore.editorState.componentData.forEach(component => {
     if (component.isLock) return
-    const {left, top, width, height} = component.style;
+    const {left, top, width, height} = getComponentRotatedStyle(component.style);
     if (x <= left && y <= top && (left + width <= x + data.width) && (top + height <= y + data.height)) {
       result.push(component);
     }
