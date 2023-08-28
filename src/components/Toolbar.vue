@@ -204,7 +204,9 @@ data.scale = editorStore.editorState.canvasStyleData.scale;
 
 <style scoped lang="scss">
 .toolbar {
-  height: 35px;
+  padding: 1px 1px;
+  white-space: nowrap;
+  overflow-x: auto;
   background: #fff;
   border-bottom: 1px solid #ddd;
 
