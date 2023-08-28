@@ -74,27 +74,28 @@ const getOriginStyle = (value:number): number => {
 
 const handleScaleChange = () => {
   clearTimeout(data.timer);
-  // 画布比例设一个最小值，不能为 0
-  // eslint-disable-next-line no-bitwise
-  data.scale = (~~data.scale) || 1;
   data.timer = setTimeout(() => {
+    // 画布比例设一个最小值，不能为 0
+    // eslint-disable-next-line no-bitwise
+    data.scale = (~~data.scale) || 1;
     const componentData = cloneDeep(editorStore.editorState.componentData)
     componentData.forEach(component => {
       Object.keys(component.style).forEach(key => {
         if (data.needToChange.includes(key)) {
           // 根据原来的比例获取样式原来的尺寸
           // 再用原来的尺寸 * 现在的比例得出新的尺寸
-          component.style[key] = format(getOriginStyle(component.style[key]))
+          // 不能用 Math.round 防止 1 px 的边框变 0
+          component.style[key] = Math.ceil(format(getOriginStyle(component.style[key])));
         }
-      })
-    })
+      });
+    });
 
     editorStore.setComponentData(componentData);
     editorStore.setCanvasStyle({
       ...editorStore.editorState.canvasStyleData,
       scale: data.scale,
     })
-  }, 500)
+  }, 1000)
 };
 
 const lock = () => {
@@ -153,6 +154,12 @@ const handleFileChange = (e: any) => {
         },
         index: undefined
       })
+
+      editorStore.recordSnapshot();
+
+      // 修复重复上传同一文件，@change 不触发的问题
+      document.querySelector('#input')?.setAttribute('type', 'text');
+      document.querySelector('#input')?.setAttribute('type', 'file');
     };
 
     img.src = fileResult;
