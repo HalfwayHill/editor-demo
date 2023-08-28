@@ -1,7 +1,7 @@
 <template>
   <div class="attr-list">
     <el-form>
-      <el-form-item v-for="(key, index)  in styleKeys.filter(item => item != 'rotate')" :key="index" :label="attribute.map[key]">
+      <el-form-item v-for="({key,label}, index)  in styleKeys" :key="index" :label="label">
         <el-color-picker v-if="key == 'borderColor'" v-model="curComponent.style[key]"></el-color-picker>
         <el-color-picker v-else-if="key == 'color'" v-model="curComponent.style[key]"></el-color-picker>
         <el-color-picker v-else-if="key == 'backgroundColor'" v-model="curComponent.style[key]"></el-color-picker>
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import {computed, reactive} from "vue";
 import store from "@/store";
+import attributeNameData from "@/utils/attributeNameData";
 
 const editorStore = store.editorStore;
 
@@ -87,29 +88,15 @@ const attribute = reactive({
     },
   ],
   selectKey: ['textAlign', 'borderStyle', 'verticalAlign'],
-  map: {
-    left: 'x 坐标',
-    top: 'y 坐标',
-    height: '高',
-    width: '宽',
-    color: '颜色',
-    backgroundColor: '背景色',
-    borderStyle: '边框风格',
-    borderWidth: '边框宽度',
-    borderColor: '边框颜色',
-    borderRadius: '边框半径',
-    fontSize: '字体大小',
-    fontWeight: '字体粗细',
-    lineHeight: '行高',
-    letterSpacing: '字间距',
-    opacity: '透明度',
-    textAlign: '左右对齐',
-    verticalAlign: '上下对齐',
-  },
+  attributeNameData,
 });
 
 const styleKeys = computed(() => {
-  return editorStore.editorState.curComponent ? Object.keys(editorStore.editorState.curComponent.style) : []
+  if (editorStore.editorState.curComponent) {
+    const curComponentStyleKeys = Object.keys(editorStore.editorState.curComponent.style);
+    return attribute.attributeNameData.filter(item => curComponentStyleKeys.includes(item.key));
+  }
+  return [];
 });
 
 const curComponent = computed(() => {
