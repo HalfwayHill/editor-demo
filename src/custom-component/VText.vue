@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import appStore from "@/store";
-import {reactive, ref} from "vue";
+import {nextTick, reactive, ref} from "vue";
 import {keycodes} from "@/utils/shortcutKey";
 
 const editorStore = appStore.editorStore;
@@ -78,6 +78,15 @@ const clearStyleFn = (e: any) => {
 const handleBlur = (e: any) => {
   if (props.element !== undefined) {
     (props.element as any).propValue = e.target.innerHTML || '&nbsp;';
+    const html = e.target.innerHTML;
+    if (html !== '') {
+      (props.element as any).propValue = e.target.innerHTML;
+    } else {
+      (props.element as any).propValue = ''
+      nextTick(() => {
+        (props.element as any).propValue = '&nbsp;'
+      })
+    }
     data.canEdit = false;
   }
 

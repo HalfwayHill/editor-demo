@@ -6,6 +6,10 @@
 
 <script setup lang="ts">
 defineProps({
+  propValue: {
+    type: String,
+    require: true,
+  },
   element: {
     type: Object,
   },

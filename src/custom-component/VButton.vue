@@ -8,6 +8,9 @@ defineProps({
     type: String,
     default: '',
   },
+  element: {
+    type: Object,
+  },
 });
 </script>
 
