@@ -93,6 +93,8 @@ const handleBlur = (e: any) => {
 };
 
 const setEdit = () => {
+  if ((props.element as any).isLock) return
+
   data.canEdit = true;
   // 全选
   selectText(text.value)
