@@ -287,6 +287,10 @@ const getTextareaHeight = (element: any, text: any) => {
 
   .lock {
     opacity: .5;
+
+    &:hover {
+      cursor: not-allowed;
+    }
   }
 }
 
