@@ -146,6 +146,16 @@ const hideArea = () => {
   data.isShowArea = false;
   data.width = 0;
   data.height = 0;
+
+  editorStore.setAreaData({
+    style: {
+      left: 0,
+      top: 0,
+      width: 0,
+      height: 0,
+    },
+    components: [],
+  });
 };
 
 /**
