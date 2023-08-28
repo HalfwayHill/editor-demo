@@ -88,12 +88,15 @@ const resetID = (jsonData: any): any => {
 const handleDrop = (event: any) => {
   event.preventDefault();
   event.stopPropagation();
-  const component = cloneDeep(compList[event.dataTransfer.getData('index')]);
-  component.style.top = event.offsetY;
-  component.style.left = event.offsetX;
-  component.id = generateID();
-  editorStore.addComponent({component, index: undefined});
-  editorStore.recordSnapshot();
+  const index = event.dataTransfer.getData('index')
+  if (index) {
+    const component = cloneDeep(compList[index]);
+    component.style.top = event.offsetY;
+    component.style.left = event.offsetX;
+    component.id = generateID();
+    editorStore.addComponent({component, index: undefined});
+    editorStore.recordSnapshot();
+  }
 };
 
 /**
