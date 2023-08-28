@@ -13,7 +13,7 @@
            :defaultStyle="item.style"
            :style="getShapeStyle(item.style)"
            :key="item.id"
-           :active="item === editorStore.editorState.curComponent"
+           :active="item.id === (editorStore.editorState.curComponent || {}).id"
            :element="item"
            :index="index"
            :class="{ lock: item.isLock }"

@@ -288,7 +288,19 @@ export const editorStore = defineStore('editor', () => {
     const redo = () => {
         if (editorState.snapshotIndex < editorState.snapshotData.length - 1) {
             editorState.snapshotIndex++;
-            setComponentData(cloneDeep(editorState.snapshotData[editorState.snapshotIndex]));
+            const componentData: any[] = cloneDeep(editorState.snapshotData[editorState.snapshotIndex]) || [];
+            if (editorState.curComponent) {
+                // 如果当前组件不在 componentData 中，则置空
+                const needClean = !componentData.find(component => editorState.curComponent.id === component.id);
+
+                if (needClean) {
+                    setCurComponent({
+                        component: null,
+                        index: null,
+                    })
+                }
+            }
+            setComponentData(componentData);
         }
     };
 
